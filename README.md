@@ -3,7 +3,7 @@ Autodiff library written in Python. Currently a WIP.
 
 ## Working
 - Gradient computation of basic functions
-- Computational graph
+- Computational graph (kind of)
 
 ## To do
 - Add more functions
