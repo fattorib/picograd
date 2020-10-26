@@ -1,6 +1,5 @@
 # AutoDiff
-Toy autodiff library for differentiating functions from R to R.
-
+Toy autodiff library for differentiating functions of a single variable. 
 ## Working
 - Gradient computation of basic functions
 - Computational graph 
