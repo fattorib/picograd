@@ -3,6 +3,10 @@ import numpy as np
 from Node import *
 from VJP_dict import dict_functions
 
+import networkx as nx
+import matplotlib.pyplot as plt
+
+
 class array():
     
     def __init__(self,data,grad):
@@ -16,14 +20,38 @@ class array():
     
     def backward(self):
         grad = 1
-                
-        #Only works if we have single child for each node
         for i in self.graph[::-1]:
-
-            grad = dict_functions[i.fun](grad,i.value,i.other)
-            
-        
+            if i.parent is not None:                
+                grad = dict_functions[i.fun](grad,i.value,i.parent.value,i.other)       
+            else:
+                grad = dict_functions[i.fun](grad,i.value,1,i.other)
+                
         return grad
     
     def print_graph(self):
         return [(self.graph[i].fun,self.graph[i].value[0]) for i in range(0,len(self.graph))]
+    
+    
+    def plot_computational_graph(self):
+        
+        
+        
+        G = nx.Graph()
+        
+        node_list =[]
+        
+        for i in range(0,len(self.graph)):
+            G.add_node(self.graph[i].fun)
+            node_list.append(self.graph[i].fun)
+        
+    
+        
+        for i in range(0,len(node_list)-1):
+            
+            G.add_edge(node_list[i],node_list[i+1])
+        
+        nx.draw(G, with_labels=True, font_weight='bold')
+
+        
+        plt.show()
+        return None
