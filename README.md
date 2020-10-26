@@ -25,5 +25,4 @@ print(x.backward())
 - Plot computational graph
 - Add more functions
 - Better interface 
-- Optimizations 
-- Naming of stuff sucks 
+- Improve naming conventions
