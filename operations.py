@@ -3,7 +3,7 @@ import numpy as np
 
 from Node import *
 
-import Diff_array as d
+import Diff_array
 
 """
 Following pseudocode of:
@@ -17,7 +17,7 @@ Following pseudocode of:
 
 def add(x,y):
     
-    if type(x) == 'Diff_array.Array' and type(y) == 'Diff_array.Array':
+    if type(x) == Diff_array.array and type(y) == Diff_array.array:
         #Unpack values to numpy arrays
         x_val = x.value
         y_val = y.value
@@ -41,15 +41,14 @@ def add(x,y):
         
         return x
     
-    elif type(x) != 'GradArray':
+    
+    elif type(x) != Diff_array.array:
         y_val = y.value
         #Perform numpy operation
-        val = x+y_val
+        val = x + y_val
         
-        #Update values and create nodes. Is this correct????
         y.value = val
 
-        
         if y.graph == []:
             y.graph.append(Node(y.value,None,'scalar_addition'))
             
@@ -59,17 +58,17 @@ def add(x,y):
                                
         return y
     
-    elif type(y) != 'GradArray':
+    elif type(y) != Diff_array.array:
         x_val = x.value
         val = y + x_val        
         #Update values and create nodes. Is this correct????
         x.value = val
                
         if x.graph == []:
-            x.graph.append(Node(x_val,None,'scalar_addition'))
+            x.graph.append(Node(x.value,None,'scalar_addition'))
         
         else:
-            x.graph.append(Node(x_val,x.graph[-1],'scalar_addition'))
+            x.graph.append(Node(x.value,x.graph[-1],'scalar_addition'))
 
         
         return x
@@ -164,9 +163,9 @@ def power(x,c):
 
 if __name__ == "__main__":
     
-    x = d.Array([1],True)
+    x = Diff_array.Array([1],True)
     
-    y = d.Array([2,2,2],True)
+    y = Diff_array.Array([2,2,2],True)
     
     def logistic(x):
         return reciprocal(add(1,exp(negative(x))))
