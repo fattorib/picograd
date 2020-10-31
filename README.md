@@ -12,6 +12,7 @@ from Node import *
 import Grad_Array as G
 from Grad_ops import *
 
+#Initialize computational graph
 graph = G.Computational_Graph()
 
 def f(x1, x2):
@@ -32,6 +33,11 @@ print(grad)
 
 - Computing derivative of the function, <img src="https://render.githubusercontent.com/render/math?math=f(x_1,x_2) = x_1 x_2 - e^{x_1 - x_2}\sin(x_1)"> at <img src="https://render.githubusercontent.com/render/math?math=(x_1,x_2) = (3,2)">
 ```
+from Node import *
+import Grad_Array as G
+from Grad_ops import *
+
+#Initialize computational graph
 graph = G.Computational_Graph()
 
 a = Node(3, 'Leaf')
