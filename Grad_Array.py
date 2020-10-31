@@ -24,7 +24,8 @@ class Computational_Graph():
 
 class array():
     """
-    Class for holding our gradient-tracking arrays. Wrapping a numpy array
+    Class for holding our gradient-tracking arrays. Wrapping a numpy array. 
+    Implementation might change significantly
     """
 
     def __init__(self, data):

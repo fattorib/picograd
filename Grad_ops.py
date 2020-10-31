@@ -8,7 +8,7 @@ def _add(a, b, graph):
     v = a.value+b.value
 
     # Create new node
-    v_i = Node(v, 'addition')
+    v_i = Node(v, 'Addition')
 
     # Add it to existing graph
     graph(v_i)
@@ -25,7 +25,7 @@ def _multiply(a, b, graph):
     v = a.value*b.value
 
     # Create new node
-    v_i = Node(v, 'multiplication')
+    v_i = Node(v, 'Multiplication')
 
     # Add it to existing graph
     graph(v_i)
@@ -42,7 +42,7 @@ def _subtract(a, b, graph):
     v = a.value-b.value
 
     # Create new node
-    v_i = Node(v, 'subtraction')
+    v_i = Node(v, 'Subtraction')
 
     # Add it to existing graph
     graph(v_i)
@@ -59,7 +59,23 @@ def _sin(a, graph):
     v = np.sin(a.value)
 
     # Create new node
-    v_i = Node(v, 'sine')
+    v_i = Node(v, 'Sine')
+
+    # Add it to existing graph
+    graph(v_i)
+
+    # Tell a and b that v_i node is a parent
+    a.parents.append(v_i)
+
+    return v_i
+
+
+def _cos(a, graph):
+
+    v = np.cos(a.value)
+
+    # Create new node
+    v_i = Node(v, 'Cosine')
 
     # Add it to existing graph
     graph(v_i)
@@ -75,7 +91,23 @@ def _ln(a, graph):
     v = np.log(a.value)
 
     # Create new node
-    v_i = Node(v, 'ln')
+    v_i = Node(v, 'Natural Logarithm')
+
+    # Add it to existing graph
+    graph(v_i)
+
+    # Tell a and b that v_i node is a parent
+    a.parents.append(v_i)
+
+    return v_i
+
+
+def _exp(a, graph):
+
+    v = np.exp(a.value)
+
+    # Create new node
+    v_i = Node(v, 'Exponential')
 
     # Add it to existing graph
     graph(v_i)
@@ -91,8 +123,8 @@ if __name__ == "__main__":
     graph = G.Computational_Graph()
 
     # Clean up how this is done
-    a = Node(2, 'leaf')
-    b = Node(5, 'leaf')
+    a = Node(2, 'Leaf')
+    b = Node(5, 'Leaf')
 
     graph(a)
     graph(b)
