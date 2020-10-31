@@ -1,6 +1,6 @@
 
-class Node():    
-    def __init__(self,value,parent,fun,*args):
+class Node():
+    def __init__(self, value, parent, fun, *args):
         """
 
         Parameters
@@ -8,7 +8,7 @@ class Node():
         value : np.array(float64)
             Value at node
         parent : Node
-            Parent node
+            Parent node(s)
         fun : str
             Primitive function at node
         *args : ??
@@ -18,10 +18,8 @@ class Node():
         None.
 
         """
-        
+
         self.value = value
-        self.parent = parent
+        self.parents = parents
         self.fun = fun
         self.other = args
-        
-        
