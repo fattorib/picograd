@@ -48,8 +48,8 @@ def _subtract(a, b, graph):
     v_idx = graph(v_i)
 
     # Tell a and b that v_i node is a parent
-    a.parents.append(v_idx)
     b.parents.append(v_idx)
+    a.parents.append(v_idx)
 
     return v_i
 
@@ -135,4 +135,6 @@ if __name__ == "__main__":
         return (_subtract(_add(_ln(x1, graph), _multiply(x1, x2, graph), graph), _sin(x2, graph), graph))
 
     print(f(a, b).value)
-    graph.graph_visualize_list()
+    # graph.graph_visualize_list()
+    print()
+    graph.backward()
