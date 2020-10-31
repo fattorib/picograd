@@ -54,3 +54,7 @@ grad = graph.backward()
 print(grad)
 [4.307, 3.383]
 ```
+## To Do:
+- Improve how the graph and values interface
+- Implement better tracking so "graph" doesn't need to be called for every operation
+- Add power as an operation
