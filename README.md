@@ -1,5 +1,5 @@
 # AutoDiff
-Toy autodiff library for differentiating functions of a single variable. 
+Toy autodiff library for differentiating vector to scalar functions. 
 ## Working
 - Gradient computation of basic functions
 - Computational graph 
@@ -20,10 +20,3 @@ z = logistic(x)
 print(x.backward())
 0.25
 ```
-
-## To do
-- Plot computational graph
-- Add more functions
-- Better interface 
-- Improve naming conventions
-
