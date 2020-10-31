@@ -10,16 +10,25 @@ class Computational_Graph():
     """
 
     def __init__(self):
-        self.comp_graph = []
+        self.comp_graph = {}
 
     def __call__(self, node):
-        self.comp_graph.append(node)
+        v_idx = 'v_'+str(len(self.comp_graph)-1)
+        self.comp_graph[v_idx] = node
+        return v_idx
 
     def graph_visualize_list(self):
         # Helpful function for debugging
-        for i in range(0, len(self.comp_graph)):
-            print('v_' + str(i-1),
-                  self.comp_graph[i].fun, self.comp_graph[i].value)
+        for i in self.comp_graph:
+            print(i, self.comp_graph.get(i).value,
+                  self.comp_graph.get(i).parents)
+
+    def backward(self):
+        """
+        The actual hard part of this all. Go backward through the graph
+        and properaly compute the gradient for all leaf nodes
+
+        """
 
 
 class array():

@@ -11,11 +11,11 @@ def _add(a, b, graph):
     v_i = Node(v, 'Addition')
 
     # Add it to existing graph
-    graph(v_i)
+    v_idx = graph(v_i)
 
     # Tell a and b that v_i node is a parent
-    a.parents.append(v_i)
-    b.parents.append(v_i)
+    a.parents.append(v_idx)
+    b.parents.append(v_idx)
 
     return v_i
 
@@ -28,11 +28,11 @@ def _multiply(a, b, graph):
     v_i = Node(v, 'Multiplication')
 
     # Add it to existing graph
-    graph(v_i)
+    v_idx = graph(v_i)
 
     # Tell a and b that v_i node is a parent
-    a.parents.append(v_i)
-    b.parents.append(v_i)
+    a.parents.append(v_idx)
+    b.parents.append(v_idx)
 
     return v_i
 
@@ -45,11 +45,11 @@ def _subtract(a, b, graph):
     v_i = Node(v, 'Subtraction')
 
     # Add it to existing graph
-    graph(v_i)
+    v_idx = graph(v_i)
 
     # Tell a and b that v_i node is a parent
-    a.parents.append(v_i)
-    b.parents.append(v_i)
+    a.parents.append(v_idx)
+    b.parents.append(v_idx)
 
     return v_i
 
@@ -62,10 +62,10 @@ def _sin(a, graph):
     v_i = Node(v, 'Sine')
 
     # Add it to existing graph
-    graph(v_i)
+    v_idx = graph(v_i)
 
     # Tell a and b that v_i node is a parent
-    a.parents.append(v_i)
+    a.parents.append(v_idx)
 
     return v_i
 
@@ -78,10 +78,10 @@ def _cos(a, graph):
     v_i = Node(v, 'Cosine')
 
     # Add it to existing graph
-    graph(v_i)
+    v_idx = graph(v_i)
 
     # Tell a and b that v_i node is a parent
-    a.parents.append(v_i)
+    a.parents.append(v_idx)
 
     return v_i
 
@@ -94,10 +94,10 @@ def _ln(a, graph):
     v_i = Node(v, 'Natural Logarithm')
 
     # Add it to existing graph
-    graph(v_i)
+    v_idx = graph(v_i)
 
     # Tell a and b that v_i node is a parent
-    a.parents.append(v_i)
+    a.parents.append(v_idx)
 
     return v_i
 
@@ -110,10 +110,10 @@ def _exp(a, graph):
     v_i = Node(v, 'Exponential')
 
     # Add it to existing graph
-    graph(v_i)
+    v_idx = graph(v_i)
 
     # Tell a and b that v_i node is a parent
-    a.parents.append(v_i)
+    a.parents.append(v_idx)
 
     return v_i
 

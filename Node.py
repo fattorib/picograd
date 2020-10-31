@@ -20,6 +20,7 @@ class Node():
         """
 
         self.value = value
+        # Using the same keys as referenced in graph should make later querying easier
         self.parents = []
         self.fun = fun
         self.other = args
