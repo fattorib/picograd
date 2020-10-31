@@ -134,7 +134,39 @@ if __name__ == "__main__":
     def f(x1, x2):
         return (_subtract(_add(_ln(x1, graph), _multiply(x1, x2, graph), graph), _sin(x2, graph), graph))
 
-    print(f(a, b).value)
+    # print(f(a, b).value)
     # graph.graph_visualize_list()
+    # print()
+    # graph.backward()
+
+    graph = G.Computational_Graph()
+
+    # Clean up how this is done
+    a = Node(2, 'Leaf')
+    b = Node(3, 'Leaf')
+
+    graph(a)
+    graph(b)
+
+    def g(x1, x2):
+        return (_subtract(_multiply(x1, x2, graph), _sin(x2, graph), graph))
+    print(g(a, b).value)
+    graph.graph_visualize_list()
     print()
-    graph.backward()
+
+    # def h(x1, x2):
+    #     return _add(x1, _ln(x2, graph), graph)
+
+    # graph = G.Computational_Graph()
+
+    # # Clean up how this is done
+    # a = Node(1, 'Leaf')
+    # b = Node(2, 'Leaf')
+
+    # graph(a)
+    # graph(b)
+
+    # print('Value:', h(a, b).value)
+
+    # graph.backward()
+    # print()

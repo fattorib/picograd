@@ -2,6 +2,8 @@ import numpy as np
 
 from Node import *
 
+from VJP_dict import *
+
 
 class Computational_Graph():
     """
@@ -27,6 +29,7 @@ class Computational_Graph():
         # Helpful function for debugging
         for i in self.comp_graph:
             node = self.comp_graph.get(i)
+
             print(i, node.fun,
                   node.value,
                   node.parents
@@ -41,12 +44,41 @@ class Computational_Graph():
             node = self.comp_graph.get(k)
             if node.parents == []:
                 # Root node, don't need to adjust gradient
-                print('Root node')
+                pass
             else:
+                # Need:
+                # 1) All of node parents: YEP
+                # 2) Value at node
+                # 3) All of parent gradients
+                # 4) Parent functions
+
+                # List
                 parents = node.parents
+
+                # Numerical Value
+                value = node.value
+
+                node_grad = 0
+
+                # Looping through each parent node
+
                 for parent in parents:
+                    # Get the actual node itself
                     parent_node = self.comp_graph.get(parent)
-                    print(parent_node.fun, parent)
+                    parent_grad = self.comp_graph_grad.get(parent)
+
+                    # Getting the function at the parent node
+                    fun = parent_node.fun
+                    fun_lambda = dict_functions[fun]
+
+                    parent_single_val = parent_grad*fun_lambda(value, 1)
+
+                    node_grad += parent_single_val
+
+                # Update node gradient value
+                self.comp_graph_grad[k] = node_grad
+
+        print(self.comp_graph_grad)
 
 
 class array():

@@ -1,15 +1,14 @@
 
 import numpy as np
-#Single functions
+# Single functions
 
-dict_functions= {'root': lambda grad,ans,x,args: grad,
-                 'exponentiation': lambda grad,ans,x,args: ans*(grad),
-                 'negation': lambda grad,ans,x,args: -grad,
-                 'scalar_addition':lambda grad,ans,x,args: grad,
-                 'reciprocal': lambda grad,ans,x,args: (-1)*grad*((1/x)**2),
-                 'multiplication': lambda grad,ans,x,args: args[0]*grad,
-                 'power': lambda grad,ans,x,args: (grad*args[0])*x**(args[0]-1)
-                 }
+dict_functions = {'Addition': lambda x, args: 1,
+
+                  'Multiplication': lambda x, args: args,
+                  'Subtraction': lambda x, args: -1,
 
 
-
+                  'Sine': lambda x, args: np.cos(x),
+                  'Cosine': lambda x, args: -np.sin(x),
+                  'Natural Logarithm': lambda x, args: 1/x,
+                  'Exponential': lambda x, args: x}
