@@ -8,8 +8,8 @@ I'm not sure what args represents yet but I know that we need it lol
 
 """
 dict_functions = {'Addition': lambda val, args: 1,
+                  'Reciprocal': lambda val, args: -1/(val)**2,
                   'Multiplication': lambda val, args: args,
-                  'Subtraction': lambda val, args: -1,
                   'Negative': lambda val, args: -1,
                   'Sine': lambda val, args: np.cos(val),
                   'Cosine': lambda val, args: -np.sin(val),
