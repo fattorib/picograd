@@ -5,7 +5,7 @@ Toy autodiff library for differentiating vector to scalar functions.
 - Computational graph 
 
 ## Example 
-Computing derivative of the $$`a^2+b^2=c^2`$$.
+Computing derivative of the $a^2+b^2=c^2$.
 
 
 Hey
