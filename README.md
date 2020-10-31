@@ -55,6 +55,8 @@ print(grad)
 [4.307, 3.383]
 ```
 ## To Do:
+- Operator/function overloading to improve overall interface
 - Improve how the graph and values interface
 - Implement better tracking so "graph" doesn't need to be called for every operation
 - Add power as an operation
+
