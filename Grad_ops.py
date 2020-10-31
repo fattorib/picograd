@@ -162,7 +162,8 @@ if __name__ == "__main__":
     print(f(a, b).value)
     # graph.graph_visualize_list()
     # print()
-    graph.backward()
+    grad = graph.backward()
+    print(grad)
 
     # graph = G.Computational_Graph()
 

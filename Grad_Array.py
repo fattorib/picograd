@@ -15,6 +15,9 @@ class Computational_Graph():
         self.comp_graph = {}
         self.comp_graph_grad = {}
 
+        # Input variables to our function
+        self.comp_leaves = []
+
     def __call__(self, node):
         """
         Used to add new node to graph
@@ -22,7 +25,8 @@ class Computational_Graph():
         v_idx = 'v_'+str(len(self.comp_graph)-1)
         self.comp_graph[v_idx] = node
         self.comp_graph_grad[v_idx] = 1
-
+        if node.fun == 'Leaf':
+            self.comp_leaves.append(v_idx)
         return v_idx
 
     def graph_visualize_list(self):
@@ -37,8 +41,7 @@ class Computational_Graph():
 
     def backward(self):
         """
-        The actual hard part of this all. Go backward through the graph
-        and properaly compute the gradient for all leaf nodes
+        Perform backpropogation to compute leaf gradients
         """
         for k in reversed(list(self.comp_graph)):
             node = self.comp_graph.get(k)
@@ -46,12 +49,6 @@ class Computational_Graph():
                 # Root node, don't need to adjust gradient
                 pass
             else:
-                # Need:
-                # 1) All of node parents: YEP
-                # 2) Value at node
-                # 3) All of parent gradients
-                # 4) Parent functions
-
                 # List
                 parents = node.parents
 
@@ -61,7 +58,6 @@ class Computational_Graph():
                 node_grad = 0
 
                 # Looping through each parent node
-
                 for parent in parents:
                     # Get the actual node itself
                     parent_node = self.comp_graph.get(parent)
@@ -79,7 +75,11 @@ class Computational_Graph():
                 # Update node gradient value
                 self.comp_graph_grad[k] = node_grad
 
-        print(self.comp_graph_grad)
+        # Go through leaves and pull their gradients
+        gradient = []
+        for i in self.comp_leaves:
+            gradient.append(self.comp_graph_grad.get(i))
+        return gradient
 
 
 class array():
