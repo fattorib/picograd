@@ -26,7 +26,7 @@ class array():
             else:
                 grad = dict_functions[i.fun](grad,i.value,1,i.other)
                 
-        return grad
+        return grad[0]
     
     def print_graph(self):
         return [(self.graph[i].fun,self.graph[i].value[0]) for i in range(0,len(self.graph))]
