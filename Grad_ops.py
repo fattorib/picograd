@@ -145,54 +145,39 @@ def _exp(a, graph):
 
 if __name__ == "__main__":
 
+    # graph = G.Computational_Graph()
+
+    # # Clean up how this is done
+    # a = Node(2, 'Leaf')
+    # b = Node(5, 'Leaf')
+
+    # # Adding to the computational graph
+    # graph(a)
+    # graph(b)
+
+    # # Using function from https://arxiv.org/pdf/1502.05767.pdf for testing
+
+    # def f(x1, x2):
+    #     return (_subtract(_add(_ln(x1, graph), _multiply(x1, x2, graph), graph), _sin(x2, graph), graph))
+
+    # print(f(a, b).value)
+    # # graph.graph_visualize_list()
+    # # print()
+    # grad = graph.backward()
+    # print(grad)
+
     graph = G.Computational_Graph()
 
     # Clean up how this is done
-    a = Node(2, 'Leaf')
-    b = Node(5, 'Leaf')
+    a = Node(3, 'Leaf')
+    b = Node(2, 'Leaf')
 
     graph(a)
     graph(b)
 
-    # Using function from https://arxiv.org/pdf/1502.05767.pdf for testing
+    def g(x1, x2):
+        return (_subtract(_multiply(x1, x2, graph), _multiply(_exp(_subtract(x1, x2, graph), graph), _sin(x1, graph), graph), graph))
 
-    def f(x1, x2):
-        return (_subtract(_add(_ln(x1, graph), _multiply(x1, x2, graph), graph), _sin(x2, graph), graph))
-
-    print(f(a, b).value)
-    # graph.graph_visualize_list()
-    # print()
+    print(g(a, b).value)
     grad = graph.backward()
     print(grad)
-
-    # graph = G.Computational_Graph()
-
-    # # Clean up how this is done
-    # a = Node(2, 'Leaf')
-    # b = Node(3, 'Leaf')
-
-    # graph(a)
-    # graph(b)
-
-    # def g(x1, x2):
-    #     return (_subtract(_multiply(x1, x2, graph), _sin(x2, graph), graph))
-    # print(g(a, b).value)
-    # graph.graph_visualize_list()
-    # print()
-
-    # def h(x1, x2):
-    #     return _add(_multiply(x1, x2, graph), _sin(x1, graph), graph)
-
-    # graph = G.Computational_Graph()
-
-    # # Clean up how this is done
-    # a = Node(2, 'Leaf')
-    # b = Node(3, 'Leaf')
-
-    # graph(a)
-    # graph(b)
-
-    # print('Value:', h(a, b).value)
-
-    # graph.backward()
-    # print()

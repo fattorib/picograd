@@ -14,4 +14,4 @@ dict_functions = {'Addition': lambda val, args: 1,
                   'Sine': lambda val, args: np.cos(val),
                   'Cosine': lambda val, args: -np.sin(val),
                   'Natural Logarithm': lambda val, args: 1/val,
-                  'Exponential': lambda val, args: val}
+                  'Exponential': lambda val, args: np.exp(val)}
