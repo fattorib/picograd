@@ -3,7 +3,7 @@ from Node import *
 import Grad_Array as G
 
 
-def _sin(a):
+def sin(a):
     graph = a.graph
 
     v = np.sin(a.value)
@@ -20,7 +20,7 @@ def _sin(a):
     return v_i
 
 
-def _cos(a):
+def cos(a):
     graph = a.graph
 
     v = np.cos(a.value)
@@ -37,7 +37,7 @@ def _cos(a):
     return v_i
 
 
-def _ln(a):
+def ln(a):
     graph = a.graph
 
     v = np.log(a.value)
@@ -54,7 +54,7 @@ def _ln(a):
     return v_i
 
 
-def _exp(a):
+def exp(a):
     graph = a.graph
     v = np.exp(a.value)
 
@@ -72,26 +72,25 @@ def _exp(a):
 
 if __name__ == "__main__":
 
-    # graph = G.Computational_Graph()
+    graph = G.Computational_Graph()
 
-    # # Clean up how this is done
-    # a = Node(2, 'Leaf', graph)
-    # b = Node(5, 'Leaf', graph)
+    # Clean up how this is done
+    a = Node(2, 'Leaf', graph)
+    b = Node(5, 'Leaf', graph)
 
-    # # Adding to the computational graph
-    # graph(a)
-    # graph(b)
+    # Adding to the computational graph
+    graph(a)
+    graph(b)
 
-    # # Using function from https://arxiv.org/pdf/1502.05767.pdf for testing
+    # Using function from https://arxiv.org/pdf/1502.05767.pdf for testing
+    def f(x1, x2):
+        return ln(x1) + x1*x2 - sin(x2)
 
-    # def f(x1, x2):
-    #     return _ln(x1) + x1*x2 - _sin(x2)
-
-    # print(f(a, b).value)
-    # # graph.graph_visualize_list()
-    # # print()
-    # grad = graph.backward()
-    # print(grad)
+    print(f(a, b).value)
+    # graph.graph_visualize_list()
+    # print()
+    grad = graph.backward()
+    print(grad)
 
     graph = G.Computational_Graph()
 
@@ -103,7 +102,7 @@ if __name__ == "__main__":
     graph(b)
 
     def g(x1, x2):
-        return x1*x2 - _exp(x1-x2)*_sin(x1)
+        return x1*x2 - exp(x1-x2)*sin(x1)
 
     print(g(a, b).value)
     grad = graph.backward()
