@@ -1,6 +1,6 @@
 
 class Node():
-    def __init__(self, value, fun, *args):
+    def __init__(self, value, fun, graph, *args):
         """
 
         Parameters
@@ -24,3 +24,128 @@ class Node():
         self.parents = []
         self.fun = fun
         self.other = args
+
+        # Used for operator overloading
+        self.graph = graph
+
+    # Non-Overloaded operators to be called by overloaded operators
+
+    def scale(self, n):
+
+        v = n*(self.value)
+
+        # Create new node
+        v_i = Node(v, 'Scaling', self.graph, n)
+
+        # Add it to existing graph
+        v_idx = self.graph(v_i)
+
+        # Tell a and b that v_i node is a parent
+        self.parents.append(v_idx)
+
+        return v_i
+
+    def recip(self):
+
+        # Add check to ensure no division by 0
+        v = 1/self.value
+
+        # Create new node
+        v_i = Node(v, 'Reciprocal', self.graph)
+
+        # Add it to existing graph
+        v_idx = self.graph(v_i)
+
+        # Tell a and b that v_i node is a parent
+        self.parents.append(v_idx)
+
+        return v_i
+
+    # Overloaded operators
+
+    def __add__(self, b):
+
+        if type(b) == Node:
+            v = self.value+b.value
+
+            # Create new node
+            v_i = Node(v, 'Addition', self.graph)
+
+            # Add it to existing graph
+            v_idx = self.graph(v_i)
+
+            # Tell a and b that v_i node is a parent
+            self.parents.append(v_idx)
+            b.parents.append(v_idx)
+
+            return v_i
+
+        else:
+            # Shifting by a scalar
+            v = self.value+b
+
+            # Create new node
+            v_i = Node(v, 'Shifting', self.graph)
+
+            # Add it to existing graph
+            v_idx = self.graph(v_i)
+
+            # Tell a that v_i node is a parent
+            self.parents.append(v_idx)
+
+            return v_i
+
+    def __pow__(self, n):
+        v = (self.value)**n
+
+        # Create new node
+        v_i = Node(v, 'Power', self.graph, n)
+
+        # Add it to existing graph
+        v_idx = self.graph(v_i)
+
+        # Tell a and b that v_i node is a parent
+        self.parents.append(v_idx)
+
+        return v_i
+
+    def __neg__(self):
+        v = -1*self.value
+
+        # Create new node
+        v_i = Node(v, 'Negative', self.graph)
+
+        # Add it to existing graph
+        v_idx = self.graph(v_i)
+
+        # Tell a and b that v_i node is a parent
+        self.parents.append(v_idx)
+
+        return v_i
+
+    def __mul__(self, b):
+
+        if type(b) == Node:
+            v = self.value*b.value
+
+            # Create new node
+            v_i = Node(v, 'Multiplication', self.graph)
+
+            # Add it to existing graph
+            v_idx = self.graph(v_i)
+
+            # Tell a and b that v_i node is a parent
+            self.parents.append(v_idx)
+            b.parents.append(v_idx)
+
+            return v_i
+
+        else:
+            return self.scale(b)
+
+    def __sub__(self, b):
+        return self + (-b)
+
+    def __truediv__(self, b):
+
+        return self*(b.recip())
