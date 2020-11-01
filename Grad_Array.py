@@ -81,17 +81,3 @@ class Computational_Graph():
         for i in self.comp_leaves:
             gradient.append(self.comp_graph_grad.get(i))
         return gradient
-
-
-class array():
-    """
-    Class for holding our gradient-tracking arrays. Wrapping a numpy array.
-    Implementation might change significantly
-    """
-
-    def __init__(self, data):
-        self.values = np.array([i for i in data])
-        self.vec_len = len(data)
-        self.grad = np.zeros(self.vec_len)
-        self.graph = []
-        self.dtype = self.values.dtype
