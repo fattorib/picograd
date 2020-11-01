@@ -95,6 +95,38 @@ def _sin(a, graph):
     return v_i
 
 
+def _pow(a, n, graph):
+
+    v = (a.value)**n
+
+    # Create new node
+    v_i = Node(v, 'Power', n)
+
+    # Add it to existing graph
+    v_idx = graph(v_i)
+
+    # Tell a and b that v_i node is a parent
+    a.parents.append(v_idx)
+
+    return v_i
+
+
+def _scale(a, n, graph):
+
+    v = n*(a.value)
+
+    # Create new node
+    v_i = Node(v, 'Scaling', n)
+
+    # Add it to existing graph
+    v_idx = graph(v_i)
+
+    # Tell a and b that v_i node is a parent
+    a.parents.append(v_idx)
+
+    return v_i
+
+
 def _cos(a, graph):
 
     v = np.cos(a.value)
@@ -166,17 +198,33 @@ if __name__ == "__main__":
     # grad = graph.backward()
     # print(grad)
 
+    # graph = G.Computational_Graph()
+
+    # # Clean up how this is done
+    # a = Node(3, 'Leaf')
+    # b = Node(2, 'Leaf')
+
+    # graph(a)
+    # graph(b)
+
+    # def g(x1, x2):
+    #     return (_subtract(_multiply(x1, x2, graph), _multiply(_exp(_subtract(x1, x2, graph), graph), _sin(x1, graph), graph), graph))
+
+    # print(g(a, b).value)
+    # grad = graph.backward()
+    # print(grad)
+
     graph = G.Computational_Graph()
 
     # Clean up how this is done
-    a = Node(3, 'Leaf')
+    a = Node(1, 'Leaf')
     b = Node(2, 'Leaf')
 
     graph(a)
     graph(b)
 
     def g(x1, x2):
-        return (_subtract(_multiply(x1, x2, graph), _multiply(_exp(_subtract(x1, x2, graph), graph), _sin(x1, graph), graph), graph))
+        return (_add(_pow(x1, 2, graph), _pow(x2, 3, graph), graph))
 
     print(g(a, b).value)
     grad = graph.backward()
