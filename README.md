@@ -1,5 +1,5 @@
-# AutoDiff
-Toy autodiff library for differentiating vector to scalar functions. 
+# Tiny AutoDiff
+A tiny autodiff package for vector to scalar functions.
 ## Working
 - Gradient computation of basic functions (add,subtract,multiply,divide, transcendentals)
 - Computational graph 
