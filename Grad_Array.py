@@ -67,6 +67,7 @@ class Computational_Graph():
                     fun = parent_node.fun
                     fun_lambda = dict_functions[fun]
 
+                    # Add a divide by 0 catch here
                     parent_single_val = parent_grad * \
                         fun_lambda(value, parent_node.value /
                                    value, parent_node.other)

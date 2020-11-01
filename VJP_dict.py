@@ -1,6 +1,4 @@
-
 import numpy as np
-# Single functions
 """
 val represents the value at the node
 parent_val is the value at the parent node
