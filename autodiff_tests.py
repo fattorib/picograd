@@ -21,7 +21,7 @@ def function_test_1var(func, value, expected_output):
     out = func(values_array[0]).value
     grad = graph.backward()
     if out == expected_output[0] and grad == expected_output[1]:
-        print('Test passed')
+        pass
     else:
         print(out)
         print(grad)
@@ -45,7 +45,7 @@ def function_test_2var(func, values, expected_outputs):
     out = func(values_array[0], values_array[1]).value
     grad = graph.backward()
     if out == expected_outputs[0] and grad == expected_outputs[1]:
-        print('Test passed')
+        pass
     else:
         print(out[0])
         print(grad)
@@ -66,7 +66,6 @@ if __name__ == "__main__":
     def d(x):
         return ops.sin(ops.cos(ops.ln(x) + x**2))
 
-    print('Single Variable Tests:')
     function_test_1var(a, [0], [0.5, [-0.25]])
     function_test_1var(b, [1], [0.7615941559557649, [0.419974341614026]])
     function_test_1var(c, [np.pi], [19334.833804250986, [121477.46943551568]])
@@ -85,8 +84,6 @@ if __name__ == "__main__":
     def d(x1, x2):
         return x1*(ops.exp(-(x1**2 + x2**2)))
 
-    print()
-    print('Two Variable Tests:')
     function_test_2var(
         a, [2, 5], [11.652071455223084, [5.5, 1.7163378145367738]])
 
