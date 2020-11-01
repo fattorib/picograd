@@ -11,11 +11,11 @@ Full list of examples are given in `autodiff_tests.py`. Here are a few:
 
 ```
 from Node import *
-import Grad_Array as G
+from Computational_Graph import *
 import Grad_ops as ops
 
 #Initialize computational graph
-graph = G.Computational_Graph()
+graph = Computational_Graph()
 
 def f(x1, x2):
     return ops.ln(x1) + x1*x2 - ops.sin(x2)
@@ -37,11 +37,11 @@ print(grad)
 - Computing derivative of the function, <img src="https://render.githubusercontent.com/render/math?math=f(x_1,x_2) = x_1 x_2 - e^{x_1 - x_2}\sin(x_1)"> at <img src="https://render.githubusercontent.com/render/math?math=(x_1,x_2) = (3,2)">
 ```
 from Node import *
-import Grad_Array as G
+from Computational_Graph import *
 import Grad_ops as ops
 
 #Initialize computational graph
-graph = G.Computational_Graph()
+graph = Computational_Graph()
 
 #Initialize leaf (variable) nodes
 a = Node(3, 'Leaf', graph)
