@@ -1,10 +1,12 @@
 # Tiny AutoDiff
 A tiny package for computing the gradients of vector to scalar functions using [Reverse Mode Automatic Differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation#Reverse_accumulation)
 ## Working
-- Gradient computation of basic functions (add,subtract,multiply,divide, transcendentals)
-- Computational graph 
+- Gradient computation of most basic functions
+- Full computational graph functionality 
 - Overloaded operators
+
 ## Examples
+Full list of examples are given in `autodiff_tests.py`. Here are a few:
 - Computing derivative of the function, <img src="https://render.githubusercontent.com/render/math?math=f(x_1,x_2) = \ln(x_1) %2B x_1 x_2 - \sin(x_2)"> at <img src="https://render.githubusercontent.com/render/math?math=(x_1,x_2) = (2,5)">
 
 ```
@@ -56,5 +58,4 @@ print(grad)
 ```
 ## To Do:
 - Improve how the graph and values interface
-- Better naming for files, objects
 
