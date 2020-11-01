@@ -2,7 +2,7 @@ import numpy as np
 """
 val represents the value at the node
 parent_val is the value at the parent node
-args represents anything arguments
+args represents any other arguments required for computation
 """
 dict_functions = {'Addition': lambda val, parent_val, args: 1,
                   'Reciprocal': lambda val, parent_val, args: -1/(val)**2,
