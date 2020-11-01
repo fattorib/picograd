@@ -79,7 +79,7 @@ def function_test_3var(func, values, expected_outputs):
 if __name__ == "__main__":
 
     def a(x):
-        return (ops.exp(x)+1).recip()
+        return (ops.exp(-x)+1).recip()
 
     def b(x):
         return (ops.exp(x*2) - 1)/(ops.exp(x*2) + 1)
@@ -90,7 +90,7 @@ if __name__ == "__main__":
     def d(x):
         return ops.sin(ops.cos(ops.ln(x) + x**2))
 
-    function_test_1var(a, [0], [0.5, [-0.25]])
+    function_test_1var(a, [0], [0.5, [0.25]])
     function_test_1var(b, [1], [0.7615941559557649, [0.419974341614026]])
     function_test_1var(c, [np.pi], [19334.833804250986, [121477.46943551568]])
     function_test_1var(
