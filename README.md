@@ -10,13 +10,13 @@ A tiny autodiff package for vector to scalar functions.
 ```
 from Node import *
 import Grad_Array as G
-from Grad_ops import *
+import Grad_ops as ops
 
 #Initialize computational graph
 graph = G.Computational_Graph()
 
 def f(x1, x2):
-    return _ln(x1) + x1*x2 - _sin(x2)
+    return ops.ln(x1) + x1*x2 - ops.sin(x2)
 
 a = Node(2, 'Leaf', graph)
 b = Node(5, 'Leaf', graph)
@@ -35,7 +35,7 @@ print(grad)
 ```
 from Node import *
 import Grad_Array as G
-from Grad_ops import *
+import Grad_ops as ops
 
 #Initialize computational graph
 graph = G.Computational_Graph()
@@ -47,7 +47,7 @@ graph(a)
 graph(b)
 
 def g(x1, x2):
-        return x1*x2 - _exp(x1-x2)*_sin(x1)
+        return x1*x2 - ops.exp(x1-x2)*ops.sin(x1)
 print(g(a,b).value)
 5.616
 grad = graph.backward()
@@ -55,8 +55,6 @@ print(grad)
 [4.307, 3.383]
 ```
 ## To Do:
-- Operator/function overloading to improve overall interface
 - Improve how the graph and values interface
-- Implement better tracking so "graph" doesn't need to be called for every operation
-- Add power as an operation
+- Better naming for files, objects
 
