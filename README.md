@@ -20,10 +20,11 @@ graph = G.Computational_Graph()
 def f(x1, x2):
     return ops.ln(x1) + x1*x2 - ops.sin(x2)
 
+#Initialize leaf (variable) nodes
 a = Node(2, 'Leaf', graph)
 b = Node(5, 'Leaf', graph)
 
-# Adding to the computational graph
+# Adding values to the computational graph
 graph(a)
 graph(b)
 print(f(a,b).value)
@@ -42,9 +43,11 @@ import Grad_ops as ops
 #Initialize computational graph
 graph = G.Computational_Graph()
 
+#Initialize leaf (variable) nodes
 a = Node(3, 'Leaf', graph)
 b = Node(2, 'Leaf', graph)
 
+# Adding values to the computational graph
 graph(a)
 graph(b)
 
