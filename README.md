@@ -5,7 +5,7 @@ A tiny autodiff package for vector to scalar functions.
 - Computational graph 
 
 ## Examples
-- Computing derivative of the function, <img src="https://render.githubusercontent.com/render/math?math=f(x_1,x_2) = \ln(x_1) %2B x_1 x_2 - \sin(x_1)"> at <img src="https://render.githubusercontent.com/render/math?math=(x_1,x_2) = (2,5)">
+- Computing derivative of the function, <img src="https://render.githubusercontent.com/render/math?math=f(x_1,x_2) = \ln(x_1) %2B x_1 x_2 - \sin(x_2)"> at <img src="https://render.githubusercontent.com/render/math?math=(x_1,x_2) = (2,5)">
 
 ```
 from Node import *
