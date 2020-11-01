@@ -25,10 +25,11 @@ class Node():
         self.fun = fun
         self.other = args
 
-        # Used for operator overloading (maybe)
+        # Used for operator overloading
         self.graph = graph
 
     # Non-Overloaded operators to be called by overloaded operators
+
     def scale(self, n):
 
         v = n*(self.value)
@@ -63,19 +64,36 @@ class Node():
     # Overloaded operators
 
     def __add__(self, b):
-        v = self.value+b.value
 
-        # Create new node
-        v_i = Node(v, 'Addition', self.graph)
+        if type(b) == Node:
+            v = self.value+b.value
 
-        # Add it to existing graph
-        v_idx = self.graph(v_i)
+            # Create new node
+            v_i = Node(v, 'Addition', self.graph)
 
-        # Tell a and b that v_i node is a parent
-        self.parents.append(v_idx)
-        b.parents.append(v_idx)
+            # Add it to existing graph
+            v_idx = self.graph(v_i)
 
-        return v_i
+            # Tell a and b that v_i node is a parent
+            self.parents.append(v_idx)
+            b.parents.append(v_idx)
+
+            return v_i
+
+        else:
+            # Shifting by a scalar
+            v = self.value+b
+
+            # Create new node
+            v_i = Node(v, 'Shifting', self.graph)
+
+            # Add it to existing graph
+            v_idx = self.graph(v_i)
+
+            # Tell a that v_i node is a parent
+            self.parents.append(v_idx)
+
+            return v_i
 
     def __pow__(self, n):
         v = (self.value)**n

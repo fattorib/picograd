@@ -107,20 +107,3 @@ if __name__ == "__main__":
     print(g(a, b).value)
     grad = graph.backward()
     print(grad)
-
-    # # Operator Overloading Examples
-    # graph = G.Computational_Graph()
-
-    # # Clean up how this is done
-    # a = Node(0, 'Leaf', graph)
-    # b = Node(0, 'Leaf', graph)
-
-    # graph(a)
-    # graph(b)
-
-    # def g(x1, x2):
-    #     return _sin(x1) + _cos(x2)
-
-    # print(g(a, b).value)
-    # grad = graph.backward()
-    # print(grad)
