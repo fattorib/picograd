@@ -1,5 +1,5 @@
 # Tiny AutoDiff
-A tiny autodiff package for vector to scalar functions.
+A tiny package for computing the gradients of vector to scalar functions using [Reverse Mode Automatic Differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation#Reverse_accumulation)
 ## Working
 - Gradient computation of basic functions (add,subtract,multiply,divide, transcendentals)
 - Computational graph 
