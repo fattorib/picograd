@@ -43,6 +43,9 @@ import Grad_ops as ops
 #Initialize computational graph
 graph = Computational_Graph()
 
+def g(x1, x2):
+        return x1*x2 - ops.exp(x1-x2)*ops.sin(x1)
+
 #Initialize leaf (variable) nodes
 a = Node(3, 'Leaf', graph)
 b = Node(2, 'Leaf', graph)
@@ -50,9 +53,6 @@ b = Node(2, 'Leaf', graph)
 # Adding values to the computational graph
 graph(a)
 graph(b)
-
-def g(x1, x2):
-        return x1*x2 - ops.exp(x1-x2)*ops.sin(x1)
 print(g(a,b).value)
 5.616
 grad = graph.backward()
