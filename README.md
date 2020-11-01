@@ -3,7 +3,7 @@ A tiny autodiff package for vector to scalar functions.
 ## Working
 - Gradient computation of basic functions (add,subtract,multiply,divide, transcendentals)
 - Computational graph 
-
+- Overloaded operators
 ## Examples
 - Computing derivative of the function, <img src="https://render.githubusercontent.com/render/math?math=f(x_1,x_2) = \ln(x_1) %2B x_1 x_2 - \sin(x_2)"> at <img src="https://render.githubusercontent.com/render/math?math=(x_1,x_2) = (2,5)">
 
@@ -16,10 +16,10 @@ from Grad_ops import *
 graph = G.Computational_Graph()
 
 def f(x1, x2):
-    return (_subtract(_add(_ln(x1, graph), _multiply(x1, x2, graph), graph), _sin(x2, graph), graph))
+    return _ln(x1) + x1*x2 - _sin(x2)
 
-a = Node(2, 'Leaf')
-b = Node(5, 'Leaf')
+a = Node(2, 'Leaf', graph)
+b = Node(5, 'Leaf', graph)
 
 # Adding to the computational graph
 graph(a)
@@ -40,14 +40,14 @@ from Grad_ops import *
 #Initialize computational graph
 graph = G.Computational_Graph()
 
-a = Node(3, 'Leaf')
-b = Node(2, 'Leaf')
+a = Node(3, 'Leaf', graph)
+b = Node(2, 'Leaf', graph)
 
 graph(a)
 graph(b)
 
 def g(x1, x2):
-        return (_subtract(_multiply(x1, x2, graph), _multiply(_exp(_subtract(x1, x2, graph), graph), _sin(x1, graph), graph), graph))
+        return x1*x2 - _exp(x1-x2)*_sin(x1)
 print(g(a,b).value)
 5.616
 grad = graph.backward()
