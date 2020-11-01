@@ -14,7 +14,7 @@ Two Variable Function Tests
 """
 
 
-def function_test(func, values, expected_outputs):
+def function_test_2var(func, values, expected_outputs):
     # Init computational graph
     graph = G.Computational_Graph()
     values_array = []
@@ -47,13 +47,14 @@ if __name__ == "__main__":
     def d(x1, x2):
         return x1*(ops.exp(-(x1**2 + x2**2)))
 
-    function_test(a, [2, 5], [11.652071455223084, [5.5, 1.7163378145367738]])
+    function_test_2var(
+        a, [2, 5], [11.652071455223084, [5.5, 1.7163378145367738]])
 
-    function_test(b, [3, 2], [5.616396046458869, [
-                  4.307474660278663, 3.383603953541131]])
+    function_test_2var(b, [3, 2], [5.616396046458869, [
+        4.307474660278663, 3.383603953541131]])
 
-    function_test(c, [6, -2], [-366.70681891263416, [
-                  -366.79894905474396, -167.75567126633288]])
+    function_test_2var(c, [6, -2], [-366.70681891263416, [
+        -366.79894905474396, -167.75567126633288]])
 
-    function_test(d, [-1, 3], [-4.5399929762484854e-05, [
-                  -4.5399929762484854e-05, 0.0002723995785749091]])
+    function_test_2var(d, [-1, 3], [-4.5399929762484854e-05, [
+        -4.5399929762484854e-05, 0.0002723995785749091]])
