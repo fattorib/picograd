@@ -1,6 +1,6 @@
 # Tiny AutoDiff
 A tiny package for computing the gradients of vector to scalar functions using [Reverse Mode Automatic Differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation#Reverse_accumulation)
-## Working
+## Implemented
 - Gradient computation of most basic functions
 - Full computational graph functionality 
 - Overloaded operators
@@ -59,6 +59,6 @@ grad = graph.backward()
 print(grad)
 [4.307, 3.383]
 ```
-## To Do:
+## Future:
 - Improve how the graph and values interface
 
