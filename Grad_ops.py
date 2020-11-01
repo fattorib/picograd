@@ -1,6 +1,6 @@
 import numpy as np
 from Node import *
-import Grad_Array as G
+import Computational_Graph as G
 
 
 def sin(a):
