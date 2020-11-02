@@ -95,6 +95,37 @@ class Node():
 
             return v_i
 
+    def __radd__(self, b):
+        if type(b) == Node:
+            v = self.value+b.value
+
+            # Create new node
+            v_i = Node(v, 'Addition', self.graph)
+
+            # Add it to existing graph
+            v_idx = self.graph(v_i)
+
+            # Tell a and b that v_i node is a parent
+            self.parents.append(v_idx)
+            b.parents.append(v_idx)
+
+            return v_i
+
+        else:
+            # Shifting by a scalar
+            v = self.value+b
+
+            # Create new node
+            v_i = Node(v, 'Shifting', self.graph)
+
+            # Add it to existing graph
+            v_idx = self.graph(v_i)
+
+            # Tell a that v_i node is a parent
+            self.parents.append(v_idx)
+
+            return v_i
+
     def __pow__(self, n):
         v = (self.value)**n
 
@@ -124,6 +155,26 @@ class Node():
         return v_i
 
     def __mul__(self, b):
+
+        if type(b) == Node:
+            v = self.value*b.value
+
+            # Create new node
+            v_i = Node(v, 'Multiplication', self.graph)
+
+            # Add it to existing graph
+            v_idx = self.graph(v_i)
+
+            # Tell a and b that v_i node is a parent
+            self.parents.append(v_idx)
+            b.parents.append(v_idx)
+
+            return v_i
+
+        else:
+            return self.scale(b)
+
+    def __rmul__(self, b):
 
         if type(b) == Node:
             v = self.value*b.value

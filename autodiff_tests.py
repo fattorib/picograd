@@ -79,10 +79,10 @@ def function_test_3var(func, values, expected_outputs):
 if __name__ == "__main__":
 
     def a(x):
-        return (ops.exp(-x)+1).recip()
+        return (1 + ops.exp(-x)).recip()
 
     def b(x):
-        return (ops.exp(x*2) - 1)/(ops.exp(x*2) + 1)
+        return (ops.exp(2*x) - 1)/(ops.exp(2*x) + 1)
 
     def c(x):
         return ops.ln(x) + ops.exp(x**2)
