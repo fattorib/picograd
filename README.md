@@ -18,7 +18,8 @@ graph = Computational_Graph()
 def f(x1, x2):
     return ops.ln(x1) + x1*x2 - ops.sin(x2)
 
-
+a = Variable(2,graph)
+b = Variable(5,graph)
 
 # Adding values to the computational graph
 graph(a)
@@ -41,9 +42,9 @@ graph = Computational_Graph()
 
 def g(x1, x2):
         return x1*x2 - ops.exp(x1-x2)*ops.sin(x1)
-
-
-
+        
+a = Variable(3,graph)
+b = Variable(2,graph)
 # Adding values to the computational graph
 graph(a)
 graph(b)
