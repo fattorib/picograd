@@ -14,7 +14,7 @@ def function_test_1var(func, value, expected_output):
     graph = G.Computational_Graph()
     values_array = []
     for i in value:
-        k = Node(i, 'Leaf', graph)
+        k = Variable(i, graph)
         values_array.append(k)
         graph(k)
 
@@ -38,7 +38,7 @@ def function_test_2var(func, values, expected_outputs):
     graph = G.Computational_Graph()
     values_array = []
     for i in values:
-        k = Node(i, 'Leaf', graph)
+        k = Variable(i, graph)
         values_array.append(k)
         graph(k)
 
@@ -131,3 +131,4 @@ if __name__ == "__main__":
     # def m(x1, x2, x3)
 
     # def n(x1, x2, x3)
+    print('Tests passed')

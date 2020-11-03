@@ -65,7 +65,7 @@ class Node():
 
     def __add__(self, b):
 
-        if type(b) == Node:
+        if type(b) == Node or type(b) == Variable:
             v = self.value+b.value
 
             # Create new node
@@ -96,7 +96,7 @@ class Node():
             return v_i
 
     def __radd__(self, b):
-        if type(b) == Node:
+        if type(b) == Node or type(b) == Variable:
             v = self.value+b.value
 
             # Create new node
@@ -156,7 +156,7 @@ class Node():
 
     def __mul__(self, b):
 
-        if type(b) == Node:
+        if type(b) == Node or type(b) == Variable:
             v = self.value*b.value
 
             # Create new node
@@ -176,7 +176,7 @@ class Node():
 
     def __rmul__(self, b):
 
-        if type(b) == Node:
+        if type(b) == Node or type(b) == Variable:
             v = self.value*b.value
 
             # Create new node
@@ -194,9 +194,28 @@ class Node():
         else:
             return self.scale(b)
 
+    # Implement rsub too
+
     def __sub__(self, b):
         return self + (-b)
 
     def __truediv__(self, b):
 
         return self*(b.recip())
+
+# Improve variable interfacing. Creates a better distinction between nodes and leaves
+
+
+class Variable(Node):
+    def __init__(self,
+                 value, graph, fun='Leaf', *args):
+        super().__init__(value, graph, fun, *args)
+        # Really the only change
+        self.fun = fun
+        self.value = value
+        # Using the same keys as referenced in graph should make later querying easier
+        self.parents = []
+        self.other = args
+
+        # Used for operator overloading
+        self.graph = graph
