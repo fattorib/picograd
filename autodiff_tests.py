@@ -62,7 +62,7 @@ def function_test_3var(func, values, expected_outputs):
     graph = G.Computational_Graph()
     values_array = []
     for i in values:
-        k = Node(i, 'Leaf', graph)
+        k = Node(i, 'Leaf', graph, True)
         values_array.append(k)
         graph(k)
 

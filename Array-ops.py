@@ -5,10 +5,11 @@ import Computational_Graph as G
 
 class Tensor():
     def __init__(self, values, graph, *args):
-        self.arr = [Variable(i, graph) for i in values]
+        self.arr = np.array([Variable(i, graph) for i in values])
         self.graph = graph
         self.item = values
         self.len = len(values)
+        self.shape = self.arr.shape
 
     def __len__(self):
         return self.len
@@ -32,11 +33,9 @@ def dot(x, y):
 
 if __name__ == "__main__":
     graph = G.Computational_Graph()
-    a = Tensor([0, 2], graph)
-    # a = Variable(0, graph)
-    # b = Tensor([4, 5], graph)
+    a = Tensor([1, 1, 3], graph)
+    b = Tensor([2, 2, 0], graph)
 
-    # print(dot(a, b).value)
-    print(sum(a))
+    print(dot(a, b).value)
     grad = graph.backward()
     print(grad)

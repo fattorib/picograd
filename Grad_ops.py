@@ -9,7 +9,7 @@ def sin(a):
     v = np.sin(a.value)
 
     # Create new node
-    v_i = Node(v, 'Sine', graph)
+    v_i = Node(v, 'Sine', graph, False)
 
     # Add it to existing graph
     v_idx = graph(v_i)
@@ -26,7 +26,7 @@ def cos(a):
     v = np.cos(a.value)
 
     # Create new node
-    v_i = Node(v, 'Cosine', graph)
+    v_i = Node(v, 'Cosine', graph, False)
 
     # Add it to existing graph
     v_idx = graph(v_i)
@@ -43,7 +43,7 @@ def ln(a):
     v = np.log(a.value)
 
     # Create new node
-    v_i = Node(v, 'Natural Logarithm', graph)
+    v_i = Node(v, 'Natural Logarithm', graph, False)
 
     # Add it to existing graph
     v_idx = graph(v_i)
@@ -59,7 +59,7 @@ def exp(a):
     v = np.exp(a.value)
 
     # Create new node
-    v_i = Node(v, 'Exponential', graph)
+    v_i = Node(v, 'Exponential', graph, False)
 
     # Add it to existing graph
     v_idx = graph(v_i)
@@ -72,38 +72,4 @@ def exp(a):
 
 if __name__ == "__main__":
 
-    graph = G.Computational_Graph()
-
-    # Clean up how this is done
-    a = Node(2, 'Leaf', graph)
-    b = Node(5, 'Leaf', graph)
-
-    # Adding to the computational graph
-    graph(a)
-    graph(b)
-
-    # Using function from https://arxiv.org/pdf/1502.05767.pdf for testing
-    def f(x1, x2):
-        return ln(x1) + x1*x2 - sin(x2)
-
-    print(f(a, b).value)
-    # graph.graph_visualize_list()
-    # print()
-    grad = graph.backward()
-    print(grad)
-
-    graph = G.Computational_Graph()
-
-    # Clean up how this is done
-    a = Node(3, 'Leaf', graph)
-    b = Node(2, 'Leaf', graph)
-
-    graph(a)
-    graph(b)
-
-    def g(x1, x2):
-        return x1*x2 - exp(x1-x2)*sin(x1)
-
-    print(g(a, b).value)
-    grad = graph.backward()
-    print(grad)
+    print('Hey')

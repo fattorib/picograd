@@ -1,6 +1,6 @@
 
 class Node():
-    def __init__(self, value, fun, graph, *args):
+    def __init__(self, value, fun, graph, requires_grad, *args):
         """
 
         Parameters
@@ -25,6 +25,8 @@ class Node():
         self.fun = fun
         self.other = args
 
+        # The ol' pytorch meme
+        self.requires_grad = requires_grad
         # Used for operator overloading
         self.graph = graph
 
@@ -35,7 +37,7 @@ class Node():
         v = n*(self.value)
 
         # Create new node
-        v_i = Node(v, 'Scaling', self.graph, n)
+        v_i = Node(v, 'Scaling', self.graph, False, n)
 
         # Add it to existing graph
         v_idx = self.graph(v_i)
@@ -51,7 +53,7 @@ class Node():
         v = 1/self.value
 
         # Create new node
-        v_i = Node(v, 'Reciprocal', self.graph)
+        v_i = Node(v, 'Reciprocal', self.graph, False)
 
         # Add it to existing graph
         v_idx = self.graph(v_i)
@@ -69,7 +71,7 @@ class Node():
             v = self.value+b.value
 
             # Create new node
-            v_i = Node(v, 'Addition', self.graph)
+            v_i = Node(v, 'Addition', self.graph, False)
 
             # Add it to existing graph
             v_idx = self.graph(v_i)
@@ -85,7 +87,7 @@ class Node():
             v = self.value+b
 
             # Create new node
-            v_i = Node(v, 'Shifting', self.graph)
+            v_i = Node(v, 'Shifting', self.graph, False)
 
             # Add it to existing graph
             v_idx = self.graph(v_i)
@@ -100,7 +102,7 @@ class Node():
             v = self.value+b.value
 
             # Create new node
-            v_i = Node(v, 'Addition', self.graph)
+            v_i = Node(v, 'Addition', self.graph, False)
 
             # Add it to existing graph
             v_idx = self.graph(v_i)
@@ -116,7 +118,7 @@ class Node():
             v = self.value+b
 
             # Create new node
-            v_i = Node(v, 'Shifting', self.graph)
+            v_i = Node(v, 'Shifting', self.graph, False)
 
             # Add it to existing graph
             v_idx = self.graph(v_i)
@@ -130,7 +132,7 @@ class Node():
         v = (self.value)**n
 
         # Create new node
-        v_i = Node(v, 'Power', self.graph, n)
+        v_i = Node(v, 'Power', self.graph, False, n)
 
         # Add it to existing graph
         v_idx = self.graph(v_i)
@@ -144,7 +146,7 @@ class Node():
         v = -1*self.value
 
         # Create new node
-        v_i = Node(v, 'Negative', self.graph)
+        v_i = Node(v, 'Negative', self.graph, False)
 
         # Add it to existing graph
         v_idx = self.graph(v_i)
@@ -160,7 +162,7 @@ class Node():
             v = self.value*b.value
 
             # Create new node
-            v_i = Node(v, 'Multiplication', self.graph)
+            v_i = Node(v, 'Multiplication', self.graph, False)
 
             # Add it to existing graph
             v_idx = self.graph(v_i)
@@ -180,7 +182,7 @@ class Node():
             v = self.value*b.value
 
             # Create new node
-            v_i = Node(v, 'Multiplication', self.graph)
+            v_i = Node(v, 'Multiplication', self.graph, False)
 
             # Add it to existing graph
             v_idx = self.graph(v_i)
@@ -208,8 +210,8 @@ class Node():
 
 class Variable(Node):
     def __init__(self,
-                 value, graph, fun='Leaf', *args):
-        super().__init__(value, graph, fun, *args)
+                 value, graph, fun='Leaf', requires_grad=True, * args):
+        super().__init__(value, graph, fun, requires_grad, *args)
         # Really the only change
         self.fun = fun
         self.value = value
