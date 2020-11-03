@@ -25,6 +25,7 @@ class Computational_Graph():
         v_idx = 'v_'+str(len(self.comp_graph)-1)
         self.comp_graph[v_idx] = node
         self.comp_graph_grad[v_idx] = 1
+
         if node.fun == 'Leaf':
             self.comp_leaves.append(v_idx)
         return v_idx
