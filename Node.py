@@ -219,3 +219,4 @@ class Variable(Node):
 
         # Used for operator overloading
         self.graph = graph
+        self.graph(self)
