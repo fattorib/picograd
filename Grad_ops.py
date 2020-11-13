@@ -1,75 +1,120 @@
 import numpy as np
 from Node import *
 import Computational_Graph as G
+from Array_ops import *
 
 
 def sin(a):
-    graph = a.graph
 
-    v = np.sin(a.value)
+    # Tensor support
 
-    # Create new node
-    v_i = Node(v, 'Sine', graph, False)
+    if type(a) == Node or type(a) == Variable:
+        graph = a.graph
 
-    # Add it to existing graph
-    v_idx = graph(v_i)
+        v = np.sin(a.value)
 
-    # Tell a and b that v_i node is a parent
-    a.parents.append(v_idx)
+        # Create new node
+        v_i = Node(v, 'Sine', graph, False)
 
-    return v_i
+        # Add it to existing graph
+        v_idx = graph(v_i)
+
+        # Tell a and b that v_i node is a parent
+        a.parents.append(v_idx)
+
+        return v_i
+
+    elif type(a) == Tensor:
+        node_arr = []
+        for i in a.arr:
+            i = sin(i)
+            node_arr.append(i)
+
+        return Tensor(node_arr, a.graph, False)
 
 
 def cos(a):
-    graph = a.graph
+    if type(a) == Node or type(a) == Variable:
+        graph = a.graph
 
-    v = np.cos(a.value)
+        v = np.cos(a.value)
 
-    # Create new node
-    v_i = Node(v, 'Cosine', graph, False)
+        # Create new node
+        v_i = Node(v, 'Cosine', graph, False)
 
-    # Add it to existing graph
-    v_idx = graph(v_i)
+        # Add it to existing graph
+        v_idx = graph(v_i)
 
-    # Tell a and b that v_i node is a parent
-    a.parents.append(v_idx)
+        # Tell a and b that v_i node is a parent
+        a.parents.append(v_idx)
 
-    return v_i
+        return v_i
+
+    elif type(a) == Tensor:
+        node_arr = []
+        for i in a.arr:
+            i = cos(i)
+            node_arr.append(i)
+
+        return Tensor(node_arr, a.graph, False)
 
 
 def ln(a):
-    graph = a.graph
 
-    v = np.log(a.value)
+    if type(a) == Node or type(a) == Variable:
+        graph = a.graph
 
-    # Create new node
-    v_i = Node(v, 'Natural Logarithm', graph, False)
+        v = np.log(a.value)
 
-    # Add it to existing graph
-    v_idx = graph(v_i)
+        # Create new node
+        v_i = Node(v, 'Natural Logarithm', graph, False)
 
-    # Tell a and b that v_i node is a parent
-    a.parents.append(v_idx)
+        # Add it to existing graph
+        v_idx = graph(v_i)
 
-    return v_i
+        # Tell a and b that v_i node is a parent
+        a.parents.append(v_idx)
+
+        return v_i
+
+    elif type(a) == Tensor:
+        node_arr = []
+        for i in a.arr:
+            i = ln(i)
+            node_arr.append(i)
+
+        return Tensor(node_arr, a.graph, False)
 
 
 def exp(a):
-    graph = a.graph
-    v = np.exp(a.value)
 
-    # Create new node
-    v_i = Node(v, 'Exponential', graph, False)
+    if type(a) == Node or type(a) == Variable:
+        graph = a.graph
+        v = np.exp(a.value)
 
-    # Add it to existing graph
-    v_idx = graph(v_i)
+        # Create new node
+        v_i = Node(v, 'Exponential', graph, False)
 
-    # Tell a and b that v_i node is a parent
-    a.parents.append(v_idx)
+        # Add it to existing graph
+        v_idx = graph(v_i)
 
-    return v_i
+        # Tell a and b that v_i node is a parent
+        a.parents.append(v_idx)
+
+        return v_i
+
+    elif type(a) == Tensor:
+        node_arr = []
+        for i in a.arr:
+            i = exp(i)
+            node_arr.append(i)
+
+        return Tensor(node_arr, a.graph, False)
 
 
 if __name__ == "__main__":
-
-    print('Hey')
+    graph = G.Computational_Graph()
+    a = Tensor([1, 1, 1], graph, requires_grad=True)
+    b = exp(a)
+    print(b.value)
+    print(graph.backward())

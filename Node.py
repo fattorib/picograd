@@ -205,14 +205,16 @@ class Node():
 
         return self*(b.recip())
 
-# Improve variable interfacing. Creates a better distinction between nodes and leaves
-
 
 class Variable(Node):
     def __init__(self,
                  value, graph, fun='Leaf', requires_grad=True, * args):
         super().__init__(value, graph, fun, requires_grad, *args)
         # Really the only change
+        """
+        Difference between this and node is that the gradient is automatically tracked.
+        """
+
         self.fun = fun
         self.value = value
         # Using the same keys as referenced in graph should make later querying easier

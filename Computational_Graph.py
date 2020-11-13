@@ -44,10 +44,13 @@ class Computational_Graph():
         """
         Perform backpropogation to compute leaf gradients
         """
+
+        output_dim = 0
         for k in reversed(list(self.comp_graph)):
             node = self.comp_graph.get(k)
+
             if node.parents == []:
-                # Root node, don't need to adjust gradient
+                output_dim += 1
                 pass
             else:
                 # List
@@ -87,4 +90,6 @@ class Computational_Graph():
         gradient = []
         for i in self.comp_leaves:
             gradient.append(self.comp_graph_grad.get(i))
+
+        assert output_dim == 1, "Gradient computations only supported for vector to scalar functions!"
         return gradient
