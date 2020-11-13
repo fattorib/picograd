@@ -49,6 +49,8 @@ class Computational_Graph():
         for k in reversed(list(self.comp_graph)):
             node = self.comp_graph.get(k)
 
+            assert output_dim < 2, "Gradient computations only supported for vector to scalar functions!"
+
             if node.parents == []:
                 output_dim += 1
                 pass
@@ -91,5 +93,4 @@ class Computational_Graph():
         for i in self.comp_leaves:
             gradient.append(self.comp_graph_grad.get(i))
 
-        assert output_dim == 1, "Gradient computations only supported for vector to scalar functions!"
         return gradient

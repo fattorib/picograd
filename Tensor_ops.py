@@ -31,6 +31,6 @@ if __name__ == "__main__":
     a = Tensor([1, 2], graph, requires_grad=True)
     b = Tensor([3, 4], graph, requires_grad=True)
 
-    c = dot(a, b)
+    c = a+b
     print(c.value)
     print(graph.backward())
