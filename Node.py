@@ -30,6 +30,9 @@ class Node():
         # Used for operator overloading
         self.graph = graph
 
+    def __repr__(self):
+        return str(self.value)
+
     # Non-Overloaded operators to be called by overloaded operators
 
     def scale(self, n):

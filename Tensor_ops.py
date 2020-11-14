@@ -31,6 +31,12 @@ if __name__ == "__main__":
     a = Tensor([1, 2], graph, requires_grad=True)
     b = Tensor([3, 4], graph, requires_grad=True)
 
-    c = a+b
+    c = dot(a, b)
+
     print(c.value)
     print(graph.backward())
+
+    mat = np.array([[1, 2], [1, 1]])
+
+    c = Tensor(mat, graph, requires_grad=True)
+    print(c)
