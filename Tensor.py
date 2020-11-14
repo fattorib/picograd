@@ -12,7 +12,6 @@ class Tensor():
         WHAT IS VALUE?
 
         """
-
         # Assume 1-D list
         if type(values) == list:
             if requires_grad == True:
@@ -61,11 +60,24 @@ class Tensor():
     # Overloading
     def __add__(self, other):
         if type(other) == Tensor:
-            nodes_arr = []
-            for i, j in zip(self.arr, other.arr):
-                nodes_arr.append(i+j)
 
-            return Tensor(nodes_arr, self.graph, False)
+            try:
+                # Need to either: include broadcast commands or disallow it
+                other.shape[1]
+                assert self.shape == other.shape, 'Broadcasting currently not supported :('
+                nodes_arr = []
+                for i, j in zip(self.arr.flatten(), other.arr.flatten()):
+                    nodes_arr.append(i+j)
+                nodes_arr = np.array(nodes_arr).reshape(self.shape)
+                return Tensor(nodes_arr, self.graph, False)
+
+            except IndexError:
+                nodes_arr = []
+                for i, j in zip(self.arr, other.arr):
+                    nodes_arr.append(i+j)
+
+                return Tensor(nodes_arr, self.graph, False)
+
         else:
             # Broadcasting
             nodes_arr = []

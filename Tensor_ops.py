@@ -28,15 +28,13 @@ def tensor_mm(x, y):
 if __name__ == "__main__":
     graph = G.Computational_Graph()
 
-    a = Tensor([1, 2], graph, requires_grad=True)
-    b = Tensor([3, 4], graph, requires_grad=True)
-
-    c = dot(a, b)
-
-    print(c.value)
-    print(graph.backward())
+    # a = Tensor([1, 2], graph, requires_grad=True)
+    # b = Tensor([3, 4], graph, requires_grad=True)
 
     mat = np.array([[1, 2], [1, 1]])
+    mat2 = np.array([[0, 1], [1, 1]])
 
     c = Tensor(mat, graph, requires_grad=True)
-    print(c)
+    d = Tensor(mat2, graph, requires_grad=True)
+
+    e = c+d
