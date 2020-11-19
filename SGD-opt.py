@@ -11,7 +11,7 @@ def f(x):
 
 if __name__ == "__main__":
     graph = G.Computational_Graph()
-    x = Tensor([1, 2, 3], graph, requires_grad=True)
+    x = Tensor([1, 1, 1], graph, requires_grad=True)
     lr = 0.1
     epochs = 100
     optimizer = SGD(graph, lr)
@@ -21,9 +21,7 @@ if __name__ == "__main__":
 
         value = f(x)
 
-        print(value, x)
         grad = graph.backward()
-        # # Update x
         optimizer.step(grad, x)
 
     print(value, x)
