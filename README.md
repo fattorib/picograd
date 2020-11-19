@@ -59,6 +59,34 @@ grad = graph.backward()
 print(grad)
 [4.307, 3.383]
 ```
+## Optimization
+TAADL also has a basic optimization library implemented:
+```
+from Tensor import *
+from Node import *
+import Computational_Graph as G
+import Tensor_ops as T
+from Optimizers import SGD
+
+def f(x):
+    return T.dot(x, x)
+    
+graph = G.Computational_Graph()
+x = Tensor([1, 1, 1], graph, requires_grad=True)
+lr = 0.1
+steps = 100
+optimizer = SGD(graph, lr)
+
+for i in range(0, steps):
+    optimizer.zero_grad()
+    value = f(x)
+    grad = graph.backward()
+    optimizer.step(grad, x)
+    
+print(value, x)
+9.077065306927186e-19 [2.03703598e-10 4.07407195e-10 6.11110793e-10]
+```
+
 ## Future:
 - Improve how the graph and values interface
 
