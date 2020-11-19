@@ -204,9 +204,16 @@ class Node():
     def __sub__(self, b):
         return self + (-b)
 
+    def __rsub__(self, b):
+        return self + (-b)
+
     def __truediv__(self, b):
 
         return self*(b.recip())
+
+    def __rtruediv__(self, b):
+
+        return self.recip()*(b)
 
 
 class Variable(Node):

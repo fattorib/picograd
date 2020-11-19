@@ -40,11 +40,27 @@ class Computational_Graph():
                   node.parents
                   )
 
+    def zero_gradients(self):
+        """
+        Call before every gradient pass so gradients don't accumulate
+        """
+        # self.comp_graph_grad.clear()
+        to_pop = []
+        for node_idx in self.comp_graph:
+            node = self.comp_graph.get(node_idx)
+            if node.fun != 'Leaf':
+                to_pop.append(node_idx)
+            else:
+                # Required or else, gradients will accumulate
+                node.parents = []
+
+        [self.comp_graph.pop(node_key, None) for node_key in to_pop]
+        [self.comp_graph_grad.pop(node_key, None) for node_key in to_pop]
+
     def backward(self):
         """
         Perform backpropogation to compute leaf gradients
         """
-
         output_dim = 0
         for k in reversed(list(self.comp_graph)):
             node = self.comp_graph.get(k)
@@ -58,10 +74,10 @@ class Computational_Graph():
                 # List
                 parents = node.parents
 
+                node_grad = 0
+
                 # Numerical Value
                 value = node.value
-
-                node_grad = 0
 
                 # Looping through each parent node
                 for parent in parents:

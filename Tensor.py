@@ -22,7 +22,7 @@ class Tensor():
             # the values at the same time
             else:
                 self.arr = np.array([i for i in values])
-                self.value = np.array([i.value for i in values])
+                self.value = np.array([i for i in values])
 
         else:
             # Assuming multidimensional np array
@@ -60,7 +60,6 @@ class Tensor():
     # Overloading
     def __add__(self, other):
         if type(other) == Tensor:
-
             try:
                 # Need to either: include broadcast commands or disallow it
                 other.shape[1]
@@ -78,8 +77,15 @@ class Tensor():
 
                 return Tensor(nodes_arr, self.graph, False)
 
+        elif type(other) == list:
+            nodes_arr = []
+            for i, j in zip(self.arr, other):
+                nodes_arr.append(i+j)
+            nodes_arr = np.array(nodes_arr).reshape(self.shape)
+            return Tensor(nodes_arr, self.graph, False)
+
         else:
-            # Broadcasting
+            # Broadcasting when adding scalar
             nodes_arr = []
             for i in self.arr:
                 nodes_arr.append(i+other)
@@ -93,6 +99,14 @@ class Tensor():
                 nodes_arr.append(i+j)
 
             return Tensor(nodes_arr, self.graph, False)
+
+        elif type(other) == list:
+            nodes_arr = []
+            for i, j in zip(self.arr, other):
+                nodes_arr.append(i+j)
+            nodes_arr = np.array(nodes_arr).reshape(self.shape)
+            return Tensor(nodes_arr, self.graph, False)
+
         else:
             # Broadcasting
             nodes_arr = []
@@ -138,8 +152,69 @@ class Tensor():
         return Tensor(nodes_arr, self.graph, False)
 
     def __sub__(self, other):
-        nodes_arr = []
-        for i, j in zip(self.arr, other.arr):
-            nodes_arr.append(i-j)
+        if type(other) == Tensor:
+            try:
+                # Need to either: include broadcast commands or disallow it
+                other.shape[1]
+                assert self.shape == other.shape, 'Broadcasting currently not supported :('
+                nodes_arr = []
+                for i, j in zip(self.arr.flatten(), other.arr.flatten()):
+                    nodes_arr.append(i-j)
+                nodes_arr = np.array(nodes_arr).reshape(self.shape)
+                return Tensor(nodes_arr, self.graph, False)
 
-        return Tensor(nodes_arr, self.graph, False)
+            except IndexError:
+                nodes_arr = []
+                for i, j in zip(self.arr, other.arr):
+                    nodes_arr.append(i-j)
+
+                return Tensor(nodes_arr, self.graph, False)
+
+        elif type(other) == list:
+            nodes_arr = []
+            for i, j in zip(self.arr, other):
+                nodes_arr.append(i-j)
+            nodes_arr = np.array(nodes_arr).reshape(self.shape)
+            return Tensor(nodes_arr, self.graph, False)
+
+        else:
+            # Broadcasting when adding scalar
+            nodes_arr = []
+            for i in self.arr:
+                nodes_arr.append(i-other)
+
+            return Tensor(nodes_arr, self.graph, False)
+
+    def __rsub__(self, other):
+        if type(other) == Tensor:
+            try:
+                # Need to either: include broadcast commands or disallow it
+                other.shape[1]
+                assert self.shape == other.shape, 'Broadcasting currently not supported :('
+                nodes_arr = []
+                for i, j in zip(self.arr.flatten(), other.arr.flatten()):
+                    nodes_arr.append(i-j)
+                nodes_arr = np.array(nodes_arr).reshape(self.shape)
+                return Tensor(nodes_arr, self.graph, False)
+
+            except IndexError:
+                nodes_arr = []
+                for i, j in zip(self.arr, other.arr):
+                    nodes_arr.append(i-j)
+
+                return Tensor(nodes_arr, self.graph, False)
+
+        elif type(other) == list:
+            nodes_arr = []
+            for i, j in zip(self.arr, other):
+                nodes_arr.append(i-j)
+            nodes_arr = np.array(nodes_arr).reshape(self.shape)
+            return Tensor(nodes_arr, self.graph, False)
+
+        else:
+            # Broadcasting when adding scalar
+            nodes_arr = []
+            for i in self.arr:
+                nodes_arr.append(i-other)
+
+            return Tensor(nodes_arr, self.graph, False)
