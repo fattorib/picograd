@@ -15,7 +15,7 @@ class Computational_Graph():
         self.comp_graph = {}
         self.comp_graph_grad = {}
 
-        # Input variables to our function
+        # These are the gradients that are automatically returned on .backward() call
         self.comp_leaves = []
 
     def __call__(self, node):
@@ -44,7 +44,6 @@ class Computational_Graph():
         """
         Call before every gradient pass so gradients don't accumulate
         """
-        # self.comp_graph_grad.clear()
         to_pop = []
         for node_idx in self.comp_graph:
             node = self.comp_graph.get(node_idx)
@@ -59,7 +58,7 @@ class Computational_Graph():
 
     def backward(self):
         """
-        Perform backpropogation to compute leaf gradients
+        Perform backpropogation to compute gradients, return all "leaf" gradients
         """
         output_dim = 0
         for k in reversed(list(self.comp_graph)):
@@ -103,6 +102,7 @@ class Computational_Graph():
 
                 # Update node gradient value
                 self.comp_graph_grad[k] = node_grad
+                node.grad = node_grad
 
         # Go through leaves and pull their gradients
         gradient = []

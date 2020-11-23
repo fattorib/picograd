@@ -37,6 +37,14 @@ if __name__ == "__main__":
     graph = G.Computational_Graph()
 
     a = Tensor([1, 2], graph, requires_grad=True)
-    b = Tensor([3, 4], graph, requires_grad=False)
+    b = Tensor([1, 1], graph, requires_grad=True)
+    print([a.arr[i].grad for i in range(0, len(a.arr))])
 
-    print(log(b))
+    def f(x, y):
+        return dot(x, y)
+
+    c = dot(a, b)
+    print(c)
+    grad = graph.backward()
+
+    print(a.grad())

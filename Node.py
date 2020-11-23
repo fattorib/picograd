@@ -25,15 +25,16 @@ class Node():
         self.fun = fun
         self.other = args
 
-        # The ol' pytorch meme
         self.requires_grad = requires_grad
         # Used for operator overloading
         self.graph = graph
+        self.grad = 0
+
+    def grad(self):
+        return self.grad
 
     def __repr__(self):
         return str(self.value)
-
-    # Non-Overloaded operators to be called by overloaded operators
 
     def scale(self, n):
 
@@ -67,7 +68,6 @@ class Node():
         return v_i
 
     # Overloaded operators
-
     def __add__(self, b):
 
         if type(b) == Node or type(b) == Variable:
@@ -220,17 +220,13 @@ class Variable(Node):
     def __init__(self,
                  value, graph, fun='Leaf', requires_grad=True, * args):
         super().__init__(value, graph, fun, requires_grad, *args)
-        # Really the only change
         """
         Difference between this and node is that the gradient is automatically tracked.
         """
-
         self.fun = fun
         self.value = value
         # Using the same keys as referenced in graph should make later querying easier
         self.parents = []
         self.other = args
-
-        # Used for operator overloading
         self.graph = graph
         self.graph(self)

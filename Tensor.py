@@ -6,12 +6,6 @@ class Tensor():
     def __init__(self, values, graph, requires_grad, *args):
 
         # Add some code to convert values to an np.array for better indexing,etc
-        """
-        WHAT DO ALL THESE THINGS REPRESENT?????
-        WHAT IS ARR?
-        WHAT IS VALUE?
-
-        """
         # Assume 1-D list
         if type(values) == list:
             if requires_grad == True:
@@ -30,6 +24,7 @@ class Tensor():
                 self.arr = np.array([Variable(i, graph)
                                      for i in values.flatten()]).reshape(values.shape)
                 self.value = np.array(values)
+
             # Assume this is intermediate tensor from some vector computation.
             # In this case, assume we are passing in array of nodes. We can get
             # the values at the same time
@@ -42,6 +37,10 @@ class Tensor():
 
         self.len = len(values)
         self.shape = self.arr.shape
+
+    def grad(self):
+        # This is needed as the gradient is not updated if it is created at first init of tensor
+        return [self.arr[i].grad for i in range(0, len(self.arr))]
 
     def __len__(self):
         return self.len
@@ -61,9 +60,8 @@ class Tensor():
     def __add__(self, other):
         if type(other) == Tensor:
             try:
-                # Need to either: include broadcast commands or disallow it
                 other.shape[1]
-                assert self.shape == other.shape, 'Broadcasting currently not supported :('
+                assert self.shape == other.shape, 'Broadcasting not supported :('
                 nodes_arr = []
                 for i, j in zip(self.arr.flatten(), other.arr.flatten()):
                     nodes_arr.append(i+j)
@@ -117,7 +115,6 @@ class Tensor():
 
     def __mul__(self, other):
         if type(other) == Tensor:
-            # Perform Hadamard Product
             assert len(self) == len(
                 other), "Check your input tensors, lengths do not match"
             nodes_arr = []
@@ -188,7 +185,6 @@ class Tensor():
     def __rsub__(self, other):
         if type(other) == Tensor:
             try:
-                # Need to either: include broadcast commands or disallow it
                 other.shape[1]
                 assert self.shape == other.shape, 'Broadcasting currently not supported :('
                 nodes_arr = []
