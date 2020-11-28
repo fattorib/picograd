@@ -1,5 +1,5 @@
 class Node():
-    def __init__(self, value, fun='', children=(), *args):
+    def __init__(self, value, fun='', children=()):
         """
 
         Parameters
@@ -10,6 +10,12 @@ class Node():
             Children node(s). Note that some references will call this node the 'Parent'
         fun : str
             Primitive function at node
+        grad: float
+            gradient value of the node. defaults to 0
+
+        _backward: lambda
+            gradient computation at this node
+
         Returns
         -------
         None.
@@ -18,7 +24,6 @@ class Node():
         self.value = value
         self.children = set(children)
         self.fun = fun
-        self.other = args
         self.grad = 0
         self._backward = lambda: None
 
@@ -52,6 +57,33 @@ class Node():
         output._backward = _backward
 
         return output
+
+    def __truediv__(self, other):
+        return self * other**-1
+
+    def __rtruediv__(self, other):
+        return other * self**-1
+
+    # TO DO
+
+    def __neg__(self):
+        return None
+
+    def __pow__(self, other):
+        output = Node(self.value**other, children=(self,), fun='pow')
+
+        def _backward():
+            self.grad += (other)*(self.value**(other-1))*output.grad
+
+        output._backward = _backward
+
+        return output
+
+    def __radd__(self, other):
+        return self + other
+
+    def __rmul__(self, other):
+        return self*other
 
     def backward(self):
         # Compute the backward pass starting at this node
