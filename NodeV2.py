@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class Node():
     def __init__(self, value, fun='', children=()):
         """
@@ -21,18 +24,27 @@ class Node():
         None.
 
         """
-        self.value = value
+
+        # Wrap everything in numpy arrays
+        # self.value = np.array(value)
+        if type(value) == list:
+            self.value = np.array(value)
+        else:
+            self.value = np.array([value])
+
         self.children = set(children)
         self.fun = fun
         self.grad = 0
         self._backward = lambda: None
+        self.shape = self.value.shape
 
     def __repr__(self):
         return str(self.value)
 
     def __add__(self, other):
-        # For now, we assume that the other value is also a node too
-        # Can add a catch for this later on
+        if type(other) != Node:
+            other = Node(other)
+
         output = Node(self.value + other.value,
                       children=(self, other), fun='add')
 
@@ -45,8 +57,9 @@ class Node():
         return output
 
     def __mul__(self, other):
-        # For now, we assume that the other value is also a node too
-        # Can add a catch for this later on
+        if type(other) != Node:
+            other = Node(other)
+
         output = Node(self.value*other.value,
                       children=(self, other), fun='mul')
 
@@ -64,10 +77,8 @@ class Node():
     def __rtruediv__(self, other):
         return other * self**-1
 
-    # TO DO
-
     def __neg__(self):
-        return None
+        return -1*self
 
     def __pow__(self, other):
         output = Node(self.value**other, children=(self,), fun='pow')
@@ -89,10 +100,11 @@ class Node():
         # Compute the backward pass starting at this node
 
         # Always assume the the base gradient is 1
-        self.grad = 1
+        assert self.shape[0] == 1, "Backward pass only supported for vector to scalar functions"
 
-        # Build the computational graph
+        self.grad = np.array(1)
 
+        # Build the computational graph. Using Karpathy Micrograd fn
         visited_nodes = set()
         topo_sorted_graph = []
 
