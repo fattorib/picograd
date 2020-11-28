@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class Node():
+class Tensor():
     def __init__(self, value, fun='', children=()):
         """
 
@@ -45,11 +45,11 @@ class Node():
         return str(self.value)
 
     def __add__(self, other):
-        if type(other) != Node:
-            other = Node(other)
+        if type(other) != Tensor:
+            other = Tensor(other)
 
-        output = Node(self.value + other.value,
-                      children=(self, other), fun='add')
+        output = Tensor(self.value + other.value,
+                        children=(self, other), fun='add')
 
         def _backward():
             self.grad += output.grad
@@ -60,11 +60,11 @@ class Node():
         return output
 
     def __mul__(self, other):
-        if type(other) != Node:
-            other = Node(other)
+        if type(other) != Tensor:
+            other = Tensor(other)
 
-        output = Node(self.value*other.value,
-                      children=(self, other), fun='mul')
+        output = Tensor(self.value*other.value,
+                        children=(self, other), fun='mul')
 
         def _backward():
             self.grad += output.grad*other.value
@@ -84,7 +84,7 @@ class Node():
         return -1*self
 
     def __pow__(self, other):
-        output = Node(self.value**other, children=(self,), fun='pow')
+        output = Tensor(self.value**other, children=(self,), fun='pow')
 
         def _backward():
             self.grad += (other)*(self.value**(other-1))*output.grad
