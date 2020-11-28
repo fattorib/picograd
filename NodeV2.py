@@ -29,14 +29,17 @@ class Node():
         # self.value = np.array(value)
         if type(value) == list:
             self.value = np.array(value)
+            self.shape = self.value.shape
         else:
-            self.value = np.array([value])
+            self.value = np.array(value)
+            self.shape = (1,)
 
         self.children = set(children)
         self.fun = fun
-        self.grad = 0
+
         self._backward = lambda: None
-        self.shape = self.value.shape
+
+        self.grad = np.zeros_like(self.value)
 
     def __repr__(self):
         return str(self.value)

@@ -25,6 +25,17 @@ def dot(x, y):
     return output
 
 
+def sum(x):
+    output = Node(np.sum(x.value), children=(x,), fun='sum')
+
+    def _backward():
+        x.grad += output.grad
+
+    output._backward = _backward
+
+    return output
+
+
 if __name__ == "__main__":
 
     a = Node([1, 2])
