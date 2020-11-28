@@ -13,6 +13,40 @@ def exp(x):
     return output
 
 
+def sin(x):
+    output = Node(np.sin(x.value), children=(x,), fun='sin')
+
+    def _backward():
+        x.grad += np.cos(x.value)*output.grad
+
+    output._backward = _backward
+
+    return output
+
+
+def cos(x):
+    output = Node(np.cos(x.value), children=(x,), fun='cos')
+
+    def _backward():
+        x.grad += -np.sin(x.value)*output.grad
+
+    output._backward = _backward
+
+    return output
+
+
+def log(x):
+    output = Node(np.log(x.value), children=(x,), fun='log')
+
+    def _backward():
+        x.grad += (x.value**-1)*output.grad
+
+    output._backward = _backward
+
+    return output
+
+
+# Vector -> Scalar functions
 def dot(x, y):
     output = Node(np.dot(x.value, y.value), children=(x, y), fun='dot')
 
