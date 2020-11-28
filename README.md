@@ -1,8 +1,13 @@
 # TAADL: Technically An AutoDiff Library
-A package for computing the gradients of vector to scalar functions using [Reverse Mode Automatic Differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation#Reverse_accumulation)
+A library for computing the gradients of vector to scalar functions using [Reverse Mode Automatic Differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation#Reverse_accumulation)
 - Gradient computation of most basic functions
 - Full computational graph functionality 
 - Overloaded operators
+
+While this library works, I wouldn't reccomend using it if you care about:
+- Speed
+- Code that is understandable
+- Easy debugging
 
 ## Examples
 - Computing derivative of the function, <img src="https://render.githubusercontent.com/render/math?math=f(x_1,x_2) = \ln(x_1) %2B x_1 x_2 - \sin(x_2)"> at <img src="https://render.githubusercontent.com/render/math?math=(x_1,x_2) = (2,5)">
@@ -54,6 +59,34 @@ grad = graph.backward()
 print(grad)
 [4.307, 3.383]
 ```
+## Optimization
+TAADL also has a basic optimization library implemented:
+```
+from Tensor import *
+from Node import *
+import Computational_Graph as G
+import Tensor_ops as T
+from Optimizers import SGD
+
+def f(x):
+    return T.dot(x, x)
+    
+graph = G.Computational_Graph()
+x = Tensor([1, 1, 1], graph, requires_grad=True)
+lr = 0.1
+steps = 100
+optimizer = SGD(graph, lr)
+
+for i in range(0, steps):
+    optimizer.zero_grad()
+    value = f(x)
+    grad = graph.backward()
+    optimizer.step(grad, x)
+    
+print(value, x)
+9.077065306927186e-19 [2.03703598e-10 4.07407195e-10 6.11110793e-10]
+```
+
 ## Future:
 - Improve how the graph and values interface
 
