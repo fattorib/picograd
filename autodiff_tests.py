@@ -16,7 +16,7 @@ def function_test_1var(func, value, expected_output):
     for i in value:
         k = Variable(i, graph)
         values_array.append(k)
-        graph(k)
+        # graph(k)
 
     out = func(values_array[0]).value
     grad = graph.backward()
@@ -40,7 +40,7 @@ def function_test_2var(func, values, expected_outputs):
     for i in values:
         k = Variable(i, graph)
         values_array.append(k)
-        graph(k)
+        # graph(k)
 
     out = func(values_array[0], values_array[1]).value
     grad = graph.backward()
@@ -62,7 +62,7 @@ def function_test_3var(func, values, expected_outputs):
     graph = G.Computational_Graph()
     values_array = []
     for i in values:
-        k = Node(i, 'Leaf', graph)
+        k = Node(i, 'Leaf', graph, True)
         values_array.append(k)
         graph(k)
 

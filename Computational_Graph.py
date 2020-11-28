@@ -15,7 +15,7 @@ class Computational_Graph():
         self.comp_graph = {}
         self.comp_graph_grad = {}
 
-        # Input variables to our function
+        # These are the gradients that are automatically returned on .backward() call
         self.comp_leaves = []
 
     def __call__(self, node):
@@ -25,7 +25,8 @@ class Computational_Graph():
         v_idx = 'v_'+str(len(self.comp_graph)-1)
         self.comp_graph[v_idx] = node
         self.comp_graph_grad[v_idx] = 1
-        if node.fun == 'Leaf':
+
+        if node.requires_grad == True:
             self.comp_leaves.append(v_idx)
         return v_idx
 
@@ -39,23 +40,43 @@ class Computational_Graph():
                   node.parents
                   )
 
+    def zero_gradients(self):
+        """
+        Call before every gradient pass so gradients don't accumulate
+        """
+        to_pop = []
+        for node_idx in self.comp_graph:
+            node = self.comp_graph.get(node_idx)
+            if node.fun != 'Leaf':
+                to_pop.append(node_idx)
+            else:
+                # Required or else, gradients will accumulate
+                node.parents = []
+
+        [self.comp_graph.pop(node_key, None) for node_key in to_pop]
+        [self.comp_graph_grad.pop(node_key, None) for node_key in to_pop]
+
     def backward(self):
         """
-        Perform backpropogation to compute leaf gradients
+        Perform backpropogation to compute gradients, return all "leaf" gradients
         """
+        output_dim = 0
         for k in reversed(list(self.comp_graph)):
             node = self.comp_graph.get(k)
+
+            assert output_dim < 2, "Gradient computations only supported for vector to scalar functions!"
+
             if node.parents == []:
-                # Root node, don't need to adjust gradient
+                output_dim += 1
                 pass
             else:
                 # List
                 parents = node.parents
 
+                node_grad = 0
+
                 # Numerical Value
                 value = node.value
-
-                node_grad = 0
 
                 # Looping through each parent node
                 for parent in parents:
@@ -81,9 +102,11 @@ class Computational_Graph():
 
                 # Update node gradient value
                 self.comp_graph_grad[k] = node_grad
+                node.grad = node_grad
 
         # Go through leaves and pull their gradients
         gradient = []
         for i in self.comp_leaves:
             gradient.append(self.comp_graph_grad.get(i))
+
         return gradient
