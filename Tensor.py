@@ -1,216 +1,128 @@
 import numpy as np
-from Node import *
 
 
 class Tensor():
-    def __init__(self, values, graph, requires_grad, *args):
+    def __init__(self, value, fun='', children=()):
+        """
 
-        # Add some code to convert values to an np.array for better indexing,etc
-        # Assume 1-D list
-        if type(values) == list:
-            if requires_grad == True:
-                self.arr = np.array([Variable(i, graph) for i in values])
-                self.value = np.array(values)
-            # If no grad, assume this is intermediate tensor from some vector computation.
-            # In this case, we are passing in array of nodes. We can get
-            # the values at the same time
-            else:
-                self.arr = np.array([i for i in values])
-                self.value = np.array([i for i in values])
+        Parameters
+        ----------
+        value : np.array(float64)
+            Value at node
+        children : Node
+            Children node(s). Note that some references will call this node the 'Parent'
+        fun : str
+            Primitive function at node
+        grad: float
+            gradient value of the node. defaults to 0
 
+        _backward: lambda
+            gradient computation at this node
+
+        Returns
+        -------
+        None.
+
+        """
+
+        # Wrap everything in numpy arrays
+        # self.value = np.array(value)
+        if type(value) == list:
+            self.value = np.array(value)
+            self.shape = self.value.shape
         else:
-            # Assuming multidimensional np array
-            if requires_grad == True:
-                self.arr = np.array([Variable(i, graph)
-                                     for i in values.flatten()]).reshape(values.shape)
-                self.value = np.array(values)
+            self.value = np.array(value)
+            self.shape = (1,)
 
-            # Assume this is intermediate tensor from some vector computation.
-            # In this case, assume we are passing in array of nodes. We can get
-            # the values at the same time
-            else:
-                self.arr = np.array([i for i in values])
-                self.value = np.array(
-                    [i.value for i in values.flatten()]).reshape(values.shape)
+        self.children = set(children)
+        self.fun = fun
 
-        self.graph = graph
+        self._backward = lambda: None
 
-        self.len = len(values)
-        self.shape = self.arr.shape
-
-    def grad(self):
-        # This is needed as the gradient is not updated if it is created at first init of tensor
-        return [self.arr[i].grad for i in range(0, len(self.arr))]
-
-    def __len__(self):
-        return self.len
+        self.grad = np.zeros_like(self.value)
 
     def __repr__(self):
         return str(self.value)
 
-    def scale(self, n):
-        node_arr = []
-        for i in self.arr:
-            i = n*i
-            node_arr.append(i)
-
-        return Tensor(node_arr, self.graph, False)
-
-    # Overloading
     def __add__(self, other):
-        if type(other) == Tensor:
-            try:
-                other.shape[1]
-                assert self.shape == other.shape, 'Broadcasting not supported :('
-                nodes_arr = []
-                for i, j in zip(self.arr.flatten(), other.arr.flatten()):
-                    nodes_arr.append(i+j)
-                nodes_arr = np.array(nodes_arr).reshape(self.shape)
-                return Tensor(nodes_arr, self.graph, False)
+        if type(other) != Tensor:
+            other = Tensor(other)
 
-            except IndexError:
-                nodes_arr = []
-                for i, j in zip(self.arr, other.arr):
-                    nodes_arr.append(i+j)
+        output = Tensor(self.value + other.value,
+                        children=(self, other), fun='add')
 
-                return Tensor(nodes_arr, self.graph, False)
+        def _backward():
+            self.grad += output.grad
+            other.grad += output.grad
 
-        elif type(other) == list:
-            nodes_arr = []
-            for i, j in zip(self.arr, other):
-                nodes_arr.append(i+j)
-            nodes_arr = np.array(nodes_arr).reshape(self.shape)
-            return Tensor(nodes_arr, self.graph, False)
+        output._backward = _backward
 
-        else:
-            # Broadcasting when adding scalar
-            nodes_arr = []
-            for i in self.arr:
-                nodes_arr.append(i+other)
-
-            return Tensor(nodes_arr, self.graph, False)
-
-    def __radd__(self, other):
-        if type(other) == Tensor:
-            nodes_arr = []
-            for i, j in zip(self.arr, other.arr):
-                nodes_arr.append(i+j)
-
-            return Tensor(nodes_arr, self.graph, False)
-
-        elif type(other) == list:
-            nodes_arr = []
-            for i, j in zip(self.arr, other):
-                nodes_arr.append(i+j)
-            nodes_arr = np.array(nodes_arr).reshape(self.shape)
-            return Tensor(nodes_arr, self.graph, False)
-
-        else:
-            # Broadcasting
-            nodes_arr = []
-            for i in self.arr:
-                nodes_arr.append(i+other)
-
-            return Tensor(nodes_arr, self.graph, False)
+        return output
 
     def __mul__(self, other):
-        if type(other) == Tensor:
-            assert len(self) == len(
-                other), "Check your input tensors, lengths do not match"
-            nodes_arr = []
-            for i, j in zip(self.arr, other.arr):
-                nodes_arr.append(i*j)
+        if type(other) != Tensor:
+            other = Tensor(other)
 
-            return Tensor(nodes_arr, self.graph, False)
+        output = Tensor(self.value*other.value,
+                        children=(self, other), fun='mul')
 
-        else:
-            # Assuming scalar mult
-            return self.scale(other)
+        def _backward():
+            self.grad += output.grad*other.value
+            other.grad += output.grad*self.value
+
+        output._backward = _backward
+
+        return output
+
+    def __truediv__(self, other):
+        return self * other**-1
+
+    def __rtruediv__(self, other):
+        return other * self**-1
+
+    def __neg__(self):
+        return -1*self
+
+    def __pow__(self, other):
+        output = Tensor(self.value**other, children=(self,), fun='pow')
+
+        def _backward():
+            self.grad += (other)*(self.value**(other-1))*output.grad
+
+        output._backward = _backward
+
+        return output
+
+    def __radd__(self, other):
+        return self + other
 
     def __rmul__(self, other):
-        if type(other) == Tensor:
-            # Perform Hadamard Product
-            assert len(self) == len(
-                other), "Check your input tensors, lengths do not match"
-            nodes_arr = []
-            for i, j in zip(self.arr, other.arr):
-                nodes_arr.append(i*j)
+        return self*other
 
-            return Tensor(nodes_arr, self.graph, False)
+    def backward(self):
+        # Compute the backward pass starting at this node
 
-        else:
-            # Assuming scalar mult
-            return self.scale(other)
+        # Always assume the the base gradient is 1
+        assert self.shape[0] == 1, "Backward pass only supported for vector to scalar functions"
 
-    def __pow__(self, n):
-        nodes_arr = []
-        for i in self.arr:
-            nodes_arr.append(i**2)
-        return Tensor(nodes_arr, self.graph, False)
+        self.grad = np.array(1)
 
-    def __sub__(self, other):
-        if type(other) == Tensor:
-            try:
-                # Need to either: include broadcast commands or disallow it
-                other.shape[1]
-                assert self.shape == other.shape, 'Broadcasting currently not supported :('
-                nodes_arr = []
-                for i, j in zip(self.arr.flatten(), other.arr.flatten()):
-                    nodes_arr.append(i-j)
-                nodes_arr = np.array(nodes_arr).reshape(self.shape)
-                return Tensor(nodes_arr, self.graph, False)
+        # Build the computational graph. Using Karpathy Micrograd fn
+        visited_nodes = set()
+        topo_sorted_graph = []
 
-            except IndexError:
-                nodes_arr = []
-                for i, j in zip(self.arr, other.arr):
-                    nodes_arr.append(i-j)
+        def build_graph(node):
+            if node not in visited_nodes:
+                visited_nodes.add(node)
+                for child_nodes in node.children:
+                    build_graph(child_nodes)
+                topo_sorted_graph.append(node)
 
-                return Tensor(nodes_arr, self.graph, False)
+        build_graph(self)
 
-        elif type(other) == list:
-            nodes_arr = []
-            for i, j in zip(self.arr, other):
-                nodes_arr.append(i-j)
-            nodes_arr = np.array(nodes_arr).reshape(self.shape)
-            return Tensor(nodes_arr, self.graph, False)
+        for node in reversed(topo_sorted_graph):
+            node._backward()
 
-        else:
-            # Broadcasting when adding scalar
-            nodes_arr = []
-            for i in self.arr:
-                nodes_arr.append(i-other)
 
-            return Tensor(nodes_arr, self.graph, False)
-
-    def __rsub__(self, other):
-        if type(other) == Tensor:
-            try:
-                other.shape[1]
-                assert self.shape == other.shape, 'Broadcasting currently not supported :('
-                nodes_arr = []
-                for i, j in zip(self.arr.flatten(), other.arr.flatten()):
-                    nodes_arr.append(i-j)
-                nodes_arr = np.array(nodes_arr).reshape(self.shape)
-                return Tensor(nodes_arr, self.graph, False)
-
-            except IndexError:
-                nodes_arr = []
-                for i, j in zip(self.arr, other.arr):
-                    nodes_arr.append(i-j)
-
-                return Tensor(nodes_arr, self.graph, False)
-
-        elif type(other) == list:
-            nodes_arr = []
-            for i, j in zip(self.arr, other):
-                nodes_arr.append(i-j)
-            nodes_arr = np.array(nodes_arr).reshape(self.shape)
-            return Tensor(nodes_arr, self.graph, False)
-
-        else:
-            # Broadcasting when adding scalar
-            nodes_arr = []
-            for i in self.arr:
-                nodes_arr.append(i-other)
-
-            return Tensor(nodes_arr, self.graph, False)
+if __name__ == "__main__":
+    print('Hey')
