@@ -1,5 +1,5 @@
 import numpy as np
-from NodeV2 import Tensor
+from Tensor import Tensor
 
 
 def exp(x):
@@ -45,8 +45,23 @@ def log(x):
 
     return output
 
+# Vector -> Vector functions
+
+
+def mm(x, y):
+    output = Tensor(np.matmul(x.value, y.value), children=(x, y), fun='mm')
+
+    def _backward():
+        x.grad += y.value*output.grad
+        y.grad += x.value*output.grad
+
+    output._backward = _backward
+
+    return output
 
 # Vector -> Scalar functions
+
+
 def dot(x, y):
     output = Tensor(np.dot(x.value, y.value), children=(x, y), fun='dot')
 

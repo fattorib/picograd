@@ -30,6 +30,11 @@ class Tensor():
         if type(value) == list:
             self.value = np.array(value)
             self.shape = self.value.shape
+
+        if type(value) == np.ndarray:
+            self.value = value
+            self.shape = self.value.shape
+
         else:
             self.value = np.array(value)
             self.shape = (1,)
@@ -59,6 +64,7 @@ class Tensor():
 
         return output
 
+    # This ops needs to be fixed for matrix mult
     def __mul__(self, other):
         if type(other) != Tensor:
             other = Tensor(other)
@@ -122,6 +128,22 @@ class Tensor():
 
         for node in reversed(topo_sorted_graph):
             node._backward()
+
+    @staticmethod
+    def zeros(shape):
+        return Tensor(np.zeros(shape))
+
+    @staticmethod
+    def ones(shape):
+        return Tensor(np.ones(shape))
+
+    @staticmethod
+    def random(*shape):
+        return Tensor(np.random.rand(*shape))
+
+    @staticmethod
+    def eye(shape):
+        return Tensor(np.eye(shape))
 
 
 if __name__ == "__main__":
