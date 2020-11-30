@@ -132,7 +132,7 @@ class Tensor():
         output = Tensor(np.sum(self.value), children=(self,), fun='sum')
 
         def _backward():
-            x.grad += output.grad
+            self.grad += output.grad
 
         output._backward = _backward
 
@@ -145,6 +145,8 @@ class Tensor():
     @staticmethod
     def ones(shape):
         return Tensor(np.ones(shape))
+
+    # Incorrect initialization
 
     @staticmethod
     def random(*shape):
