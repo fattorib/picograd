@@ -64,7 +64,6 @@ class Tensor():
 
         return output
 
-    # This ops needs to be fixed for matrix mult
     def __mul__(self, other):
         if type(other) != Tensor:
             other = Tensor(other)
@@ -128,6 +127,16 @@ class Tensor():
 
         for node in reversed(topo_sorted_graph):
             node._backward()
+
+    def sum(self):
+        output = Tensor(np.sum(self.value), children=(self,), fun='sum')
+
+        def _backward():
+            x.grad += output.grad
+
+        output._backward = _backward
+
+        return output
 
     @staticmethod
     def zeros(shape):

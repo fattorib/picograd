@@ -47,13 +47,20 @@ def log(x):
 
 # Vector -> Vector functions
 
+# Implementing for Matrix-Vector Product
+# x is matrix, y is vector
 
-def mm(x, y):
-    output = Tensor(np.matmul(x.value, y.value), children=(x, y), fun='mm')
+# Makes sense to package this in a Linear class
+
+
+def linear_mm(weights, input):
+    output = Tensor(np.matmul(input.value, np.transpose(
+        weights.value)), children=(weights, input), fun='linear')
 
     def _backward():
-        x.grad += y.value*output.grad
-        y.grad += x.value*output.grad
+        # Following 'Linear' code from: https://pytorch.org/docs/stable/notes/extending.html#extending-torch-autograd
+        weights.grad += np.matmul(np.transpose(output.grad), input.value)
+        input.grad += np.matmul(output.grad, weights.value)
 
     output._backward = _backward
 
@@ -86,12 +93,13 @@ def sum(x):
 
 
 if __name__ == "__main__":
+    out_feats = 10
+    in_feats = 20
+    weight_matrix = Tensor.random(out_feats, in_feats)
+    input_vector = Tensor.ones((1, in_feats))
 
-    a = Tensor([1, 2])
-
-    b = Tensor([3, 2])
-
-    c = dot(a, b)
-
-    c.backward()
-    print(c)
+    c = mm(weight_matrix, input_vector)
+    d = sum(c)
+    d.backward()
+    # print(weight_matrix.grad)
+    print(input_vector.grad)
