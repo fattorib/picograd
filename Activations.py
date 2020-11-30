@@ -11,7 +11,7 @@ def ReLU(x):
     def _backward():
         x.grad += output.grad*(output.value)
 
-        output._backward = _backward
+    output._backward = _backward
 
     return output
 
@@ -24,3 +24,4 @@ if __name__ == "__main__":
     print(z)
     z.backward()
     print(x.grad)
+    # print(y.grad)
