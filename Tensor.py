@@ -130,8 +130,9 @@ class Tensor():
     def sum(self, axis):
         output = Tensor(np.sum(self.value, axis), children=(self,), fun='sum')
 
-        # Backward pass might be incorrect now?
+        # Backward pass might be incorrect now. Yeah this isn't correct
         def _backward():
+            # self.grad += np.ones_like(self.value)*output.grad
             self.grad += output.grad
 
         output._backward = _backward
