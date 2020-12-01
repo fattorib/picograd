@@ -184,6 +184,18 @@ class Tensor():
 
         return output
 
+    def matmul(self, weight):
+        output = Tensor(np.matmul(self.value, (weight.value)),
+                        children=(self, weight), fun='matmul')
+
+        def _backward():
+            self.grad += np.matmul(output.grad, np.transpose(weight.value))
+            weight.grad += np.matmul(np.transpose(self.value), (output.grad))
+
+        output._backward = _backward
+
+        return output
+
     def norm(self):
         # Euclidean norm
         return ((self**2).sum())**(1/2)

@@ -21,4 +21,15 @@ class Linear():
 
 
 if __name__ == "__main__":
-    print('Hey')
+
+    in_feats = 4
+    out_feats = 2
+
+    linear_layer = Linear(in_feats, out_feats)
+
+    input_tensor = Tensor([[3, -0.5, 2, 7], [3, -0.5, 2, 7]])
+
+    # pred_tensor = Tensor([[2.5, 0.0, 2, 8], [2.5, 0.0, 2, 8]])
+
+    output_tensor = linear_layer(input_tensor)
+    print(output_tensor)
