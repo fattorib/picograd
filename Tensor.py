@@ -33,9 +33,10 @@ class Tensor():
             self.value = value
             self.shape = self.value.shape
 
+        # This is buggy
         else:
             self.value = np.array(value, dtype=np.float32)
-            self.shape = (1,)
+            self.shape = self.value.shape
 
         self.children = set(children)
         self.fun = fun
@@ -57,6 +58,21 @@ class Tensor():
         def _backward():
             self.grad += output.grad
             other.grad += output.grad
+
+        output._backward = _backward
+
+        return output
+
+    def __sub__(self, other):
+        if type(other) != Tensor:
+            other = Tensor(other)
+
+        output = Tensor(self.value - other.value,
+                        children=(self, other), fun='sub')
+
+        def _backward():
+            self.grad += output.grad
+            other.grad += -output.grad
 
         output._backward = _backward
 
@@ -107,7 +123,7 @@ class Tensor():
         # Compute the backward pass starting at this node
 
         # Always assume the the base gradient is 1
-        assert self.shape[0] == 1, "Backward pass only supported for vector to scalar functions"
+        # assert self.shape[0] == 1, "Backward pass only supported for vector to scalar functions"
 
         self.grad = np.array(1)
 
@@ -127,8 +143,8 @@ class Tensor():
         for node in reversed(topo_sorted_graph):
             node._backward()
 
-    def sum(self, axis):
-        output = Tensor(np.sum(self.value, axis), children=(self,), fun='sum')
+    def sum(self, *axis):
+        output = Tensor(np.sum(self.value, *axis), children=(self,), fun='sum')
 
         # Backward pass might be incorrect now. Yeah this isn't correct
         def _backward():
@@ -139,12 +155,16 @@ class Tensor():
 
         return output
 
-    def mean(self, axis):
-        output = Tensor(np.mean(self.value, axis), children=(self,), fun='sum')
+    def mean(self, *axis):
+        output = Tensor(np.mean(self.value, *axis),
+                        children=(self,), fun='mean')
 
         # Backward pass might be incorrect now?
         def _backward():
-            self.grad += (1/self.shape[axis])*output.grad
+            try:
+                self.grad += (1/(self.shape[0]*self.shape[1]))*output.grad
+            except IndexError:
+                self.grad += (1/(self.shape[0]))*output.grad
 
         output._backward = _backward
 
@@ -164,6 +184,10 @@ class Tensor():
 
         return output
 
+    def norm(self):
+        # Euclidean norm
+        return ((self**2).sum())**(1/2)
+
     def exp(self):
         output = Tensor(np.exp(self.value), children=(self,), fun='exp')
 
@@ -174,23 +198,23 @@ class Tensor():
 
         return output
 
-    @staticmethod
+    @ staticmethod
     def zeros(shape):
         return Tensor(np.zeros(shape, dtype=np.float32))
 
-    @staticmethod
+    @ staticmethod
     def ones(shape):
         return Tensor(np.ones(shape, dtype=np.float32))
 
-    @staticmethod
+    @ staticmethod
     def random(*shape):
         return Tensor(np.random.rand(*shape).astype(np.float32))
 
-    @staticmethod
+    @ staticmethod
     def eye(shape):
         return Tensor(np.eye(shape, dtype=np.float32))
 
-    @staticmethod
+    @ staticmethod
     def random_uniform(*shape):
 
         random_vals = np.random.uniform(-1., 1.,
