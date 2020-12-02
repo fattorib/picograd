@@ -1,5 +1,6 @@
 import numpy as np
 from Tensor import Tensor
+from Loss import MSELoss
 
 
 class Linear():
@@ -55,20 +56,47 @@ class Sigmoid():
 
 
 class Softmax():
+    @staticmethod
+    def __call__(input, dim):
+        exp = input.exp()
+        sum = (input.exp()).sum(dim)
+        sum.expand_dim(dim)
+        return exp/sum
+
+
+class LogSoftmax():
 
     @staticmethod
-    def __call__(input, axis):
+    def __call__(input, dim):
         exp = input.exp()
-        sum = (input.exp()).sum(axis)
-        print(exp.shape)
-        sum.expand_dim(axis)
-        return exp/sum
+        sum = (input.exp()).sum(dim)
+        sum.expand_dim(dim)
+        return (exp/sum).log()
 
 
 if __name__ == "__main__":
 
-    x = Tensor.ones((10, 2))
+    x = Tensor.ones((2, 4))
 
-    softmax = Softmax()
+    softmax = Sigmoid()
 
-    print(softmax(x, axis=1))
+    y = softmax(x)
+
+    actual_out = Tensor([[1, 2, 3, 4], [3.2, 1, 3, 1]])
+    mse = MSELoss()
+
+    loss = mse(y, actual_out)
+    loss.backward()
+    print(x.grad)
+
+    import torch
+
+    x = torch.ones((2, 4), requires_grad=True)
+    softmax = torch.nn.Sigmoid()
+    y = softmax(x)
+    actual_out = torch.tensor(
+        [[1, 2, 3, 4], [3.2, 1, 3, 1]], requires_grad=True)
+    mse = torch.nn.MSELoss()
+    loss = mse(y, actual_out)
+    loss.backward()
+    print(x.grad)
