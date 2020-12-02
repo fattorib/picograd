@@ -22,6 +22,20 @@ if __name__ == "__main__":
     mse = MSELoss()
 
     z = mse(x, y)
+    print(z)
+    z.backward()
+    print(z)
+    print(x.grad)
+    print(y.grad)
+
+    import torch
+
+    x = torch.tensor([[3, -0.5, 2, 7], [3, -0.5, 2, 7]], requires_grad=True)
+    y = torch.tensor([[2.5, 0.0, 2, 8], [2.5, 0.0, 2, 8]], requires_grad=True)
+
+    mse = torch.nn.MSELoss()
+    z = mse(x, y)
+    print(z)
     z.backward()
     print(z)
     print(x.grad)

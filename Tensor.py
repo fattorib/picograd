@@ -34,9 +34,9 @@ class Tensor():
             self.shape = self.value.shape
 
         # This is buggy
-        else:
+        elif type(value) != list and type(value) != np.ndarray:
             self.value = np.array(value, dtype=np.float32)
-            self.shape = self.value.shape
+            self.shape = (1,)
 
         self.children = set(children)
         self.fun = fun
@@ -50,14 +50,14 @@ class Tensor():
         self.shape = self.value.shape
 
     def __repr__(self):
-        return str(self.value)
+        return '(' + str(self.value) + ', grad_fn =<' + self.fun + '>)'
 
     def __add__(self, other):
         if type(other) != Tensor:
             other = Tensor(other)
 
         output = Tensor(self.value + other.value,
-                        children=(self, other), fun='add')
+                        children=(self, other), fun='AddBackward')
 
         def _backward():
             self.grad += output.grad
@@ -72,7 +72,7 @@ class Tensor():
             other = Tensor(other)
 
         output = Tensor(self.value - other.value,
-                        children=(self, other), fun='sub')
+                        children=(self, other), fun='SubBackward')
 
         def _backward():
             self.grad += output.grad
@@ -87,12 +87,12 @@ class Tensor():
             other = Tensor(other)
 
         output = Tensor(self.value*other.value,
-                        children=(self, other), fun='mul')
+                        children=(self, other), fun='MulBackward')
 
         def _backward():
             # These are problematic
-            self.grad += output.grad*other.value
-            other.grad += output.grad*self.value
+            self.grad += (output.grad)*other.value
+            other.grad += (output.grad)*self.value
 
         output._backward = _backward
 
@@ -108,7 +108,7 @@ class Tensor():
         return self*-1.0
 
     def __pow__(self, other):
-        output = Tensor(self.value**other, children=(self,), fun='pow')
+        output = Tensor(self.value**other, children=(self,), fun='PowBackward')
 
         def _backward():
             self.grad += (other)*(self.value**(other-1))*output.grad
@@ -127,7 +127,8 @@ class Tensor():
         # Compute the backward pass starting at this node
 
         # Always assume the the base gradient is 1
-        # assert self.shape[0] == 1, "Backward pass only supported for vector to scalar functions"
+        assert (
+            self.shape == () or (self.shape[0] == 1)), "Backward pass only supported for vector to scalar functions"
 
         self.grad = np.array(1)
 
@@ -148,7 +149,8 @@ class Tensor():
             node._backward()
 
     def sum(self, *axis):
-        output = Tensor(np.sum(self.value, *axis), children=(self,), fun='sum')
+        output = Tensor(np.sum(self.value, *axis),
+                        children=(self,), fun='SumBackward')
 
         # Backward pass might be incorrect now. Yeah this isn't correct
         def _backward():
@@ -161,7 +163,7 @@ class Tensor():
 
     def mean(self, *axis):
         output = Tensor(np.mean(self.value, *axis),
-                        children=(self,), fun='mean')
+                        children=(self,), fun='MeanBackward')
 
         # Backward pass might be incorrect now?
         def _backward():
@@ -178,7 +180,7 @@ class Tensor():
 
         # Case when self is input,
         output = Tensor(self.value.dot(weight.value),
-                        children=(self, weight), fun='dot')
+                        children=(self, weight), fun='DotBackward')
 
         def _backward():
             self.grad += output.grad.dot(np.transpose(weight.value))
@@ -190,7 +192,7 @@ class Tensor():
 
     def matmul(self, weight):
         output = Tensor(np.matmul(self.value, (weight.value)),
-                        children=(self, weight), fun='matmul')
+                        children=(self, weight), fun='MatmulBackard')
 
         def _backward():
             self.grad += np.matmul(output.grad, np.transpose(weight.value))
@@ -205,10 +207,20 @@ class Tensor():
         return ((self**2).sum())**(1/2)
 
     def exp(self):
-        output = Tensor(np.exp(self.value), children=(self,), fun='exp')
+        output = Tensor(np.exp(self.value), children=(self,), fun='ExpBackard')
 
         def _backward():
             self.grad += output.grad*np.exp(self.value)
+
+        output._backward = _backward
+
+        return output
+
+    def log(self):
+        output = Tensor(np.log(self.value), children=(self,), fun='LogBackard')
+
+        def _backward():
+            self.grad += output.grad*(self.value)**(-1)
 
         output._backward = _backward
 
