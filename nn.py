@@ -27,7 +27,7 @@ class ReLU():
     @staticmethod
     def __call__(input):
         output = Tensor(np.maximum(input.value, 0),
-                        children=(input,), fun='ReLU')
+                        children=(input,), fun='ReLUBackward')
 
         def _backward():
             input.grad += output.grad*(output.value)
@@ -45,7 +45,7 @@ class Sigmoid():
         val = 1/(1+np.exp(-(input.value)))
 
         output = Tensor(val,
-                        children=(input,), fun='Sigmoid')
+                        children=(input,), fun='SigmoidBackard')
 
         def _backward():
             input.grad += output.grad*(val*(1-val))
@@ -68,32 +68,47 @@ class LogSoftmax():
 
     @staticmethod
     def __call__(input, dim):
-        exp = input.exp()
-        sum = (input.exp()).sum(dim)
-        sum.expand_dim(dim)
-        return (exp/sum).log()
+        exp = np.exp(input.value)
+        sum = np.sum(np.exp(input.value), 1)
+        sum = np.expand_dims(sum, 1)
+        val = np.log(exp/sum)
+        output = Tensor(val,
+                        children=(input,), fun='LogSoftmaxBackward')
+
+        # Complete credit to TinyGrad for this gradient...
+        def _backward():
+            input.grad += (output.grad)-(np.exp(val) *
+                                         (np.sum(output.grad, axis=1).reshape((-1, 1))))
+
+        output._backward = _backward
+
+        return output
 
 
 if __name__ == "__main__":
 
-    x = Tensor.ones((2, 4))
+    x = Tensor([[0.001, 0.2, -1, 3], [3.2, 1, 3, 1]])
 
-    softmax = Sigmoid()
+    softmax = LogSoftmax()
 
-    y = softmax(x)
+    y = softmax(x, dim=1)
+
+    print(y)
 
     actual_out = Tensor([[1, 2, 3, 4], [3.2, 1, 3, 1]])
-    mse = MSELoss()
 
+    mse = MSELoss()
     loss = mse(y, actual_out)
     loss.backward()
     print(x.grad)
 
     import torch
 
-    x = torch.ones((2, 4), requires_grad=True)
-    softmax = torch.nn.Sigmoid()
+    x = torch.tensor([[0.001, 0.2, -1, 3], [3.2, 1, 3, 1]], requires_grad=True)
+    softmax = torch.nn.LogSoftmax(dim=1)
     y = softmax(x)
+    print(y)
+
     actual_out = torch.tensor(
         [[1, 2, 3, 4], [3.2, 1, 3, 1]], requires_grad=True)
     mse = torch.nn.MSELoss()
