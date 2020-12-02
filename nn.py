@@ -22,7 +22,6 @@ class Linear():
 
 
 class ReLU():
-    # Backward pass is incorrect
 
     @staticmethod
     def __call__(input):
