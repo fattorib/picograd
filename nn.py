@@ -22,7 +22,7 @@ class Linear():
 
 
 class ReLU():
-    # Missing init method here
+    # Backward pass is incorrect
 
     @staticmethod
     def __call__(input):
@@ -30,7 +30,8 @@ class ReLU():
                         children=(input,), fun='ReLUBackward')
 
         def _backward():
-            input.grad += output.grad*(output.value)
+            # These gotta be ones!!!!
+            input.grad += output.grad*(input.value >= 0).astype(int)
 
         output._backward = _backward
 
@@ -58,15 +59,24 @@ class Sigmoid():
 class Softmax():
     @staticmethod
     def __call__(input, dim):
-        exp = input.exp()
-        sum = (input.exp()).sum(dim)
-        sum.expand_dim(dim)
-        return exp/sum
+        exp = np.exp(input.value)
+        sum = np.sum(np.exp(input.value), 1)
+        sum = np.expand_dims(sum, 1)
+        val = exp/sum
+        output = Tensor(val,
+                        children=(input,), fun='SoftmaxBackward')
+
+        def _backward():
+            input.grad += (output.grad)*(val)*(1-exp)
+
+        output._backward = _backward
+
+        return output
 
 
 class LogSoftmax():
 
-    @staticmethod
+    @ staticmethod
     def __call__(input, dim):
         exp = np.exp(input.value)
         sum = np.sum(np.exp(input.value), 1)
@@ -89,7 +99,7 @@ if __name__ == "__main__":
 
     x = Tensor([[0.001, 0.2, -1, 3], [3.2, 1, 3, 1]])
 
-    softmax = LogSoftmax()
+    softmax = Softmax()
 
     y = softmax(x, dim=1)
 
@@ -105,7 +115,7 @@ if __name__ == "__main__":
     import torch
 
     x = torch.tensor([[0.001, 0.2, -1, 3], [3.2, 1, 3, 1]], requires_grad=True)
-    softmax = torch.nn.LogSoftmax(dim=1)
+    softmax = torch.nn.Softmax(dim=1)
     y = softmax(x)
     print(y)
 
