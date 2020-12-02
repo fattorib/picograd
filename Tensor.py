@@ -45,6 +45,10 @@ class Tensor():
 
         self.grad = np.zeros_like(self.value, dtype=np.float32)
 
+    def expand_dim(self, axis):
+        self.value = np.expand_dims(self.value, axis)
+        self.shape = self.value.shape
+
     def __repr__(self):
         return str(self.value)
 
@@ -95,10 +99,10 @@ class Tensor():
         return output
 
     def __truediv__(self, other):
-        return self * other**-1
+        return self * (other**-1)
 
     def __rtruediv__(self, other):
-        return other * self**-1
+        return other * (self**-1)
 
     def __neg__(self):
         return self*-1.0

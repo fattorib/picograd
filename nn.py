@@ -20,16 +20,55 @@ class Linear():
         return input.dot(self.weights)+self.bias
 
 
+class ReLU():
+    # Missing init method here
+
+    @staticmethod
+    def __call__(input):
+        output = Tensor(np.maximum(input.value, 0),
+                        children=(input,), fun='ReLU')
+
+        def _backward():
+            input.grad += output.grad*(output.value)
+
+        output._backward = _backward
+
+        return output
+
+
+class Sigmoid():
+
+    @staticmethod
+    def __call__(input):
+
+        val = 1/(1+np.exp(-(input.value)))
+
+        output = Tensor(val,
+                        children=(input,), fun='Sigmoid')
+
+        def _backward():
+            input.grad += output.grad*(val*(1-val))
+
+        output._backward = _backward
+
+        return output
+
+
+class Softmax():
+
+    @staticmethod
+    def __call__(input, axis):
+        exp = input.exp()
+        sum = (input.exp()).sum(axis)
+        print(exp.shape)
+        sum.expand_dim(axis)
+        return exp/sum
+
+
 if __name__ == "__main__":
 
-    in_feats = 4
-    out_feats = 2
+    x = Tensor.ones((10, 2))
 
-    linear_layer = Linear(in_feats, out_feats)
+    softmax = Softmax()
 
-    input_tensor = Tensor([[3, -0.5, 2, 7], [3, -0.5, 2, 7]])
-
-    # pred_tensor = Tensor([[2.5, 0.0, 2, 8], [2.5, 0.0, 2, 8]])
-
-    output_tensor = linear_layer(input_tensor)
-    print(output_tensor)
+    print(softmax(x, axis=1))
