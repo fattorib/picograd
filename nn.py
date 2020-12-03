@@ -25,12 +25,14 @@ class ReLU():
 
     @staticmethod
     def __call__(input):
-        output = Tensor(np.maximum(input.value, 0),
+
+        val = np.maximum(input.value, 0)
+        output = Tensor(val,
                         children=(input,), fun='ReLUBackward')
 
         def _backward():
             # These gotta be ones!!!!
-            input.grad += output.grad*(input.value >= 0).astype(int)
+            input.grad += output.grad*(input.value > 0)
 
         output._backward = _backward
 
@@ -41,9 +43,15 @@ class Sigmoid():
 
     @staticmethod
     def __call__(input):
+        # Disable overflow warnings
+        with np.warnings.catch_warnings():
+            np.warnings.filterwarnings('ignore')
 
-        val = 1./(1.+np.exp(-(input.value)))
-
+            # These cases are needed, overflow warning else
+            val = np.where(input.value >= 0,
+                           1/(1 + np.exp(-input.value)),
+                           np.exp(input.value)/(1 + np.exp(input.value))
+                           )
         output = Tensor(val,
                         children=(input,), fun='SigmoidBackard')
 
@@ -56,7 +64,7 @@ class Sigmoid():
 
 
 class Softmax():
-    @staticmethod
+    @ staticmethod
     def __call__(input, dim):
         exp = np.exp(input.value)
         sum = np.sum(np.exp(input.value), 1)
@@ -77,10 +85,20 @@ class LogSoftmax():
 
     @ staticmethod
     def __call__(input, dim):
+
+        # Overflow here.
+
+        # Something like https://stackoverflow.com/questions/44081007/logsoftmax-stability is needed. Only an issue when ReLU is used
         exp = np.exp(input.value)
         sum = np.sum(np.exp(input.value), 1)
         sum = np.expand_dims(sum, 1)
         val = np.log(exp/sum)
+        # def logsumexp(x):
+        #     c = x.max(axis=1)
+        #     return c + np.log(np.exp(x-c.reshape((-1, 1))).sum(axis=1))
+
+        # val = input.value - logsumexp(input.value).reshape((-1, 1))
+
         output = Tensor(val,
                         children=(input,), fun='LogSoftmaxBackward')
 

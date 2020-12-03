@@ -9,7 +9,8 @@ class SGD():
 
     def step(self):
         for parameter in self.parameters:
-            parameter.value = parameter.value - self.lr*(parameter.grad)
+            # Gradients blowing up on backward pass
+            parameter.value = parameter.value - (parameter.grad)*self.lr
 
     def zero_grad(self):
         for parameter in self.parameters:
