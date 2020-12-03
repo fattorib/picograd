@@ -42,7 +42,7 @@ class Sigmoid():
     @staticmethod
     def __call__(input):
 
-        val = 1/(1+np.exp(-(input.value)))
+        val = 1./(1.+np.exp(-(input.value)))
 
         output = Tensor(val,
                         children=(input,), fun='SigmoidBackard')

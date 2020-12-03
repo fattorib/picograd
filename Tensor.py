@@ -45,6 +45,9 @@ class Tensor():
 
         self.grad = np.zeros_like(self.value, dtype=np.float32)
 
+    def zero_grad(self):
+        self.grad = np.zeros_like(self.value, dtype=np.float32)
+
     def expand_dim(self, axis):
         self.value = np.expand_dims(self.value, axis)
         self.shape = self.value.shape
@@ -60,8 +63,9 @@ class Tensor():
                         children=(self, other), fun='AddBackward')
 
         def _backward():
-            self.grad += output.grad
-            other.grad += output.grad
+            # Broadcasting is unhappy with +=
+            self.grad = self.grad + output.grad
+            other.grad = other.grad + output.grad
 
         output._backward = _backward
 

@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
     print(x.shape)
 
-    mse = NLLLoss()
+    mse = MSELoss()
 
     z = mse(x, y)
     print(z)
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     y = torch.tensor([1.0, 0.0, 0.0], requires_grad=True).type(torch.long)
     print(y.shape)
 
-    mse = torch.nn.NLLLoss()
+    mse = torch.nn.MSELoss()
     z = mse(x, y)
     print(z)
     z.backward()
