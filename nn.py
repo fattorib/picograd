@@ -63,6 +63,26 @@ class Sigmoid():
         return output
 
 
+class Tanh():
+    @staticmethod
+    def __call__(input):
+        # Disable overflow warnings
+        with np.warnings.catch_warnings():
+            np.warnings.filterwarnings('ignore')
+
+            # These cases are needed, overflow warning else
+            val = np.tanh(input.value)
+        output = Tensor(val,
+                        children=(input,), fun='TanhBackard')
+
+        def _backward():
+            input.grad += output.grad*(1-val**2)
+
+        output._backward = _backward
+
+        return output
+
+
 class Softmax():
     @ staticmethod
     def __call__(input, dim):
