@@ -1,11 +1,11 @@
 import matplotlib.pyplot as plt
 from Tensor import *
 
-from nn import Linear, ReLU, LogSoftmax, Sigmoid
+from nn import Linear, ReLU, LogSoftmax, Sigmoid, Tanh
 
 from Loss import NLLLoss
 
-from optim import SGD
+from optim import SGD, Adam
 
 from GetMNIST import fetch_mnist
 
@@ -13,14 +13,15 @@ from GetMNIST import fetch_mnist
 class Network():
 
     def __init__(self):
-        self.fc1 = Linear(784, 64, bias=True)
-        self.fc2 = Linear(64, 10, bias=True)
+        self.fc1 = Linear(784, 128, bias=True)
+        self.fc2 = Linear(128, 10, bias=True)
         self.logsoftmax = LogSoftmax()
         self.relu = ReLU()
         self.sigmoid = Sigmoid()
+        self.tanh = Tanh()
 
     def forward(self, input):
-        x = self.relu(self.fc1(input))
+        x = self.tanh(self.fc1(input))
         x = self.fc2(x)
         return self.logsoftmax(x, 1)
 
@@ -30,18 +31,19 @@ class Network():
 
 
 model = Network()
-optimizer = SGD(model.parameters(), lr=0.1)
+# optimizer = SGD(model.parameters(), lr=0.05)
+optimizer = Adam(model.parameters())
 criterion = NLLLoss()
 
 # Batching code
 X_train, Y_train, X_test, Y_test = fetch_mnist()
 
-epochs = 2
+epochs = 500
 losses = []
 
 for i in range(0, epochs):
     optimizer.zero_grad()
-    samp = np.random.randint(0, X_train.shape[0], size=(1))
+    samp = np.random.randint(0, X_train.shape[0], size=(128))
 
     x = Tensor(X_train[samp].reshape((-1, 28*28)).astype(np.float32))
     Y = Y_train[samp]
@@ -51,7 +53,6 @@ for i in range(0, epochs):
     y = Tensor(y)
 
     out = model.forward(x)
-    print(out)
     loss = criterion(out, y)
     loss.backward()
     losses.append(loss.value)

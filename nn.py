@@ -32,7 +32,7 @@ class ReLU():
 
         def _backward():
             # These gotta be ones!!!!
-            input.grad += output.grad*(input.value > 0)
+            input.grad += output.grad*(val > 0)
 
         output._backward = _backward
 
@@ -66,17 +66,15 @@ class Sigmoid():
 class Tanh():
     @staticmethod
     def __call__(input):
-        # Disable overflow warnings
         with np.warnings.catch_warnings():
             np.warnings.filterwarnings('ignore')
 
-            # These cases are needed, overflow warning else
             val = np.tanh(input.value)
         output = Tensor(val,
                         children=(input,), fun='TanhBackard')
 
         def _backward():
-            input.grad += output.grad*(1-val**2)
+            input.grad += output.grad*(1-(val**2))
 
         output._backward = _backward
 
@@ -107,8 +105,6 @@ class LogSoftmax():
     def __call__(input, dim):
 
         # Overflow here.
-
-        # Something like https://stackoverflow.com/questions/44081007/logsoftmax-stability is needed. Only an issue when ReLU is used
         exp = np.exp(input.value)
         sum = np.sum(np.exp(input.value), 1)
         sum = np.expand_dims(sum, 1)
