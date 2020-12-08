@@ -32,7 +32,7 @@ class ReLU():
 
         def _backward():
             # These gotta be ones!!!!
-            input.grad += output.grad*(val > 0)
+            input.grad += output.grad*((val > 0).astype(np.float32))
 
         output._backward = _backward
 

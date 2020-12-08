@@ -249,7 +249,9 @@ class Tensor():
     @ staticmethod
     def random_uniform(*shape):
 
-        random_vals = np.random.uniform(-1., 1.,
+        random_vals = np.random.uniform(-1, 1,
                                         size=shape)/np.sqrt(np.prod(shape))
+        # random_vals = np.random.uniform(-np.sqrt(np.prod(shape)), np.sqrt(np.prod(shape)),
+        #                                 size=shape)
 
         return Tensor(random_vals.astype(np.float32))

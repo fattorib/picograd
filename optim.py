@@ -20,7 +20,6 @@ class SGD(Optimizer):
 
     def step(self):
         for parameter in self.parameters:
-            # Gradients blowing up on backward pass
             parameter.value = parameter.value - (parameter.grad)*self.lr
 
 
