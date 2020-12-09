@@ -44,23 +44,35 @@ class MNISTloader():
         self.data = data
         self.labels = labels
         self.batch_size = batch_size
+        self.num_batches = (
+            np.floor(len(self.data)/self.batch_size))
+        self.iter = 0
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        samp = np.random.randint(0, self.data.shape[0], size=(self.batch_size))
-        X = self.data[samp].reshape((-1, 28*28)).astype(np.float32)
-        Y = self.labels[samp]
-        y = np.zeros((len(samp), 10), np.float32)
-        y[range(y.shape[0]), Y] = 1
-        return Tensor(X), Tensor(y)
+        if self.iter < self.num_batches:
+            self.iter += 1
+            # Could be some overlap with this sample, could use np.argpartition or something
+            samp = np.random.randint(
+                0, self.data.shape[0], size=(self.batch_size))
+            X = self.data[samp].reshape((-1, 28*28)).astype(np.float32)
+            Y = self.labels[samp]
+            y = np.zeros((len(samp), 10), np.float32)
+            y[range(y.shape[0]), Y] = 1
+            return Tensor(X), Tensor(y)
+
+        else:
+            raise StopIteration
 
 
 if __name__ == "__main__":
     X_train, Y_train, X_test, Y_test = fetch_mnist()
-    loader = MNISTloader(X_train, Y_train, batch_size=64)
+    loader = MNISTloader(X_train[0:10], Y_train[0:10], batch_size=1)
+
+    print(loader.num_batches)
+    print()
 
     for images, labels in loader:
-        print(images[0:1])
-        print(labels[0:1])
+        print(images)
