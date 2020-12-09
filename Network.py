@@ -44,7 +44,7 @@ X_train, X_test = X_train / 255-0.5, X_test / 255-0.5
 # Creating dataloader
 loader = MNISTloader(X_train, Y_train, batch_size=64)
 
-epochs = 100
+epochs = 10
 losses = []
 
 for i in range(0, epochs):
@@ -66,8 +66,8 @@ for i in range(0, epochs):
 
         optimizer.step()
 
-    print('Running Loss:', running_loss/64)
-    losses.append(running_loss/64)
+    print('Running Loss:', running_loss/len(loader))
+    losses.append(running_loss/len(loader))
 
 plt.plot(range(0, epochs), losses)
 plt.show()

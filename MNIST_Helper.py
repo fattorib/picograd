@@ -51,6 +51,9 @@ class MNISTloader():
     def __iter__(self):
         return self
 
+    def __len__(self):
+        return self.num_batches
+
     def __next__(self):
         if self.iter < self.num_batches:
             self.iter += 1
