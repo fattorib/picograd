@@ -7,7 +7,7 @@ from Loss import NLLLoss
 
 from optim import SGD, Adam
 
-from GetMNIST import fetch_mnist
+from MNIST_Helper import *
 
 
 class Network():
@@ -43,27 +43,27 @@ X_train, Y_train, X_test, Y_test = fetch_mnist()
 # Normalizing data. Default MNIST is not normalized
 X_train, X_test = X_train / 255-0.5, X_test / 255-0.5
 
-epochs = 1500
+# Creating dataloader
+loader = MNISTloader(X_train, Y_train, batch_size=64)
+
+epochs = 10
 losses = []
 
 for i in range(0, epochs):
-    optimizer.zero_grad()
-    # Incorrect step here
-    samp = np.random.randint(0, X_train.shape[0], size=(64))
+    running_loss = 0
 
-    x = Tensor(X_train[samp].reshape((-1, 28*28)).astype(np.float32))
-    Y = Y_train[samp]
-    y = np.zeros((len(samp), 10), np.float32)
-    # correct loss for NLL, torch NLL loss returns one per row
-    y[range(y.shape[0]), Y] = 1
-    y = Tensor(y)
+    for images, labels in loader:
 
-    out = model.forward(x)
-    loss = criterion(out, y)
-    loss.backward()
-    losses.append(loss.value)
-    optimizer.step()
+        optimizer.zero_grad()
 
+        out = model.forward(images)
+        loss = criterion(out, labels)
+        loss.backward()
+        running_loss += loss.value
+        optimizer.step()
+
+    print('Running Loss:', running_loss/64)
+    losses.append(running_loss/64)
 
 plt.plot(range(0, epochs), losses)
 plt.show()
