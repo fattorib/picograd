@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from Tensor import *
 
-from nn import Linear, ReLU, LogSoftmax, Sigmoid, Tanh
+from nn import Linear, ReLU, LogSoftmax, Sigmoid, Tanh, Dropout
 
 from Loss import NLLLoss
 
@@ -16,7 +16,10 @@ class Network():
 
     def __init__(self):
         self.fc1 = Linear(784, 256, bias=True)
-        self.fc2 = Linear(256, 10, bias=True)
+        self.fc2 = Linear(256, 128, bias=True)
+        self.fc3 = Linear(128, 10)
+        self.dropout = Dropout()
+
         self.logsoftmax = LogSoftmax()
         self.relu = ReLU()
         self.sigmoid = Sigmoid()
@@ -24,31 +27,38 @@ class Network():
 
     def forward(self, input):
         x = self.relu(self.fc1(input))
-        x = self.fc2(x)
+        x = self.dropout(x)
+        x = self.relu(self.fc2(x))
+        x = self.dropout(x)
+        x = self.fc3(x)
         return self.logsoftmax(x, 1)
 
     def parameters(self):
 
-        return [self.fc1.weights, self.fc2.weights, self.fc1.bias, self.fc2.bias]
+        return [self.fc1.weights, self.fc2.weights, self.fc3.weights, self.fc1.bias, self.fc2.bias,
+                self.fc3.bias]
 
-    def gpu(self):
-        for param in self.parameters():
-            param.gpu()
+    def eval(self):
+        self.dropout.p = 0
+
+    # def gpu(self):
+    #     for param in self.parameters():
+    #         param.gpu()
 
 
 model = Network()
 
-optimizer = SGD(model.parameters(), lr=0.1)
-# optimizer = Adam(model.parameters())
+# optimizer = SGD(model.parameters(), lr=0.1)
+optimizer = Adam(model.parameters())
 criterion = NLLLoss()
 
 # Batching code
 
 # Regular MNIST
-# X_train, Y_train, X_test, Y_test = fetch_mnist()
+X_train, Y_train, X_test, Y_test = fetch_mnist()
 
 # Fashion MNIST
-X_train, Y_train, X_test, Y_test = fetch_fashion_mnist()
+# X_train, Y_train, X_test, Y_test = fetch_fashion_mnist()
 
 # Normalizing data. Default MNIST is not normalized
 X_train, X_test = X_train / 255-0.5, X_test / 255-0.5
@@ -78,7 +88,9 @@ for i in range(0, epochs):
 
         optimizer.step()
 
-    print('Running Loss:', running_loss/len(trainloader))
+    if i % 2 == 0:
+        print('Running Loss:', running_loss/len(trainloader))
+
     losses.append(running_loss/len(trainloader))
 
 trainloader.iter = 0
@@ -88,5 +100,7 @@ plt.show()
 
 testloader = MNISTloader(X_test, Y_test, batch_size=64)
 
-eval_acc(model, trainloader)
 eval_acc(model, testloader)
+
+model.eval()
+eval_acc(model, trainloader)
