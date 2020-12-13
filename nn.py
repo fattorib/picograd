@@ -24,25 +24,28 @@ class Linear():
 class Dropout():
 
     def __init__(self, p=0.5):
-        # Default probability is 50%
         self.p = p
 
     def __call__(self, input):
-        dropout_vals = np.random.binomial(
-            [np.ones(input.shape)], 1-self.p)[0]
+        if self. p > 0:
+            dropout_vals = np.random.binomial(
+                [np.ones(input.shape)], 1-self.p)[0]
 
-        val = input.value*dropout_vals*(1/(1-self.p))
+            val = input.value*dropout_vals*(1/(1-self.p))
 
-        output = Tensor(val,
-                        children=(input,), fun='DropoutBackward')
+            output = Tensor(val,
+                            children=(input,), fun='DropoutBackward')
 
-        def _backward():
-            # These gotta be ones!!!!
-            input.grad += output.grad*(val)
+            def _backward():
+                # Same issue as ReLU
+                input.grad += output.grad*((val != 0)*(1/(1-self.p)))
 
-        output._backward = _backward
+            output._backward = _backward
 
-        return output
+            return output
+
+        else:
+            return input
 
 
 class ReLU():

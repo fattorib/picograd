@@ -16,10 +16,9 @@ class Network():
 
     def __init__(self):
         self.fc1 = Linear(784, 256, bias=True)
-        self.fc2 = Linear(256, 128, bias=True)
-        self.fc3 = Linear(128, 10)
-        self.dropout = Dropout()
-
+        self.fc2 = Linear(256, 256, bias=True)
+        self.fc3 = Linear(256, 10)
+        self.dropout = Dropout(p=0.5)
         self.logsoftmax = LogSoftmax()
         self.relu = ReLU()
         self.sigmoid = Sigmoid()
@@ -100,7 +99,6 @@ plt.show()
 
 testloader = MNISTloader(X_test, Y_test, batch_size=64)
 
-eval_acc(model, testloader)
-
 model.eval()
+eval_acc(model, testloader)
 eval_acc(model, trainloader)
