@@ -38,6 +38,28 @@ def fetch_mnist():
     return X_train, Y_train, X_test, Y_test
 
 
+def fetch_fashion_mnist():
+    import gzip
+
+    def parse(path):
+        with open(path, "rb") as f:
+            dat = f.read()
+
+        return np.frombuffer(gzip.decompress(dat), dtype=np.uint8).copy()
+
+    train_path = 'Fashion_mnist/train-images-idx3-ubyte.gz'
+    train_labels_path = 'Fashion_mnist/train-labels-idx1-ubyte.gz'
+
+    test_path = 'Fashion_mnist/t10k-images-idx3-ubyte.gz'
+    test_labels_path = 'Fashion_mnist/t10k-labels-idx1-ubyte.gz'
+
+    X_train = parse(train_path)[0x10:].reshape((-1, 28, 28))
+    Y_train = parse(train_labels_path)[8:]
+    X_test = parse(test_path)[0x10:].reshape((-1, 28, 28))
+    Y_test = parse(test_labels_path)[8:]
+    return X_train, Y_train, X_test, Y_test
+
+
 class MNISTloader():
 
     def __init__(self, data, labels, batch_size):
@@ -72,11 +94,6 @@ class MNISTloader():
 
 
 if __name__ == "__main__":
-    X_train, Y_train, X_test, Y_test = fetch_mnist()
-    loader = MNISTloader(X_train[0:10], Y_train[0:10], batch_size=1)
+    X_train, Y_train, X_test, Y_test = fetch_fashion_mnist()
 
-    print(loader.num_batches)
-    print()
-
-    for images, labels in loader:
-        print(images)
+    print(X_train[1])

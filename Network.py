@@ -43,7 +43,12 @@ optimizer = SGD(model.parameters(), lr=0.1)
 criterion = NLLLoss()
 
 # Batching code
-X_train, Y_train, X_test, Y_test = fetch_mnist()
+
+# Regular MNIST
+# X_train, Y_train, X_test, Y_test = fetch_mnist()
+
+# Fashion MNIST
+X_train, Y_train, X_test, Y_test = fetch_fashion_mnist()
 
 # Normalizing data. Default MNIST is not normalized
 X_train, X_test = X_train / 255-0.5, X_test / 255-0.5
@@ -58,7 +63,7 @@ for i in range(0, epochs):
     running_loss = 0
 
     # Need to reset iterator every epoch
-    loader.iter = 0
+    trainloader.iter = 0
     for images, labels in trainloader:
 
         optimizer.zero_grad()
