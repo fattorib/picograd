@@ -45,7 +45,7 @@ class MNISTloader():
         self.labels = labels
         self.batch_size = batch_size
         self.num_batches = (
-            np.floor(len(self.data)/self.batch_size))
+            np.floor(len(self.data)/self.batch_size)).astype(int)
         self.iter = 0
 
     def __iter__(self):
@@ -64,6 +64,7 @@ class MNISTloader():
             Y = self.labels[samp]
             y = np.zeros((len(samp), 10), np.float32)
             y[range(y.shape[0]), Y] = 1
+            self.raw_labels = Y
             return Tensor(X), Tensor(y)
 
         else:

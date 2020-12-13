@@ -1,4 +1,5 @@
 import numpy as np
+import cupy as cp
 
 
 class Tensor():
@@ -45,12 +46,20 @@ class Tensor():
 
         self.grad = np.zeros_like(self.value, dtype=np.float32)
 
+        self.gpu_flag = False
+
     def zero_grad(self):
         self.grad = np.zeros_like(self.value, dtype=np.float32)
 
     def expand_dim(self, axis):
         self.value = np.expand_dims(self.value, axis)
         self.shape = self.value.shape
+
+    def gpu(self):
+        # Pass value and grad to gpu
+        self.value = cp.asarray(self.value)
+        self.grad = cp.asarray(self.grad)
+        self.gpu_flag = True
 
     def __repr__(self):
         return '(' + str(self.value) + ', grad_fn =<' + self.fun + '>)'

@@ -9,6 +9,8 @@ from optim import SGD, Adam
 
 from MNIST_Helper import *
 
+from Model_Eval import *
+
 
 class Network():
 
@@ -21,7 +23,7 @@ class Network():
         self.tanh = Tanh()
 
     def forward(self, input):
-        x = self.sigmoid(self.fc1(input))
+        x = self.relu(self.fc1(input))
         x = self.fc2(x)
         return self.logsoftmax(x, 1)
 
@@ -29,10 +31,15 @@ class Network():
 
         return [self.fc1.weights, self.fc2.weights, self.fc1.bias, self.fc2.bias]
 
+    def gpu(self):
+        for param in self.parameters():
+            param.gpu()
+
 
 model = Network()
-# optimizer = SGD(model.parameters(), lr=0.1)
-optimizer = Adam(model.parameters())
+
+optimizer = SGD(model.parameters(), lr=0.1)
+# optimizer = Adam(model.parameters())
 criterion = NLLLoss()
 
 # Batching code
@@ -41,8 +48,8 @@ X_train, Y_train, X_test, Y_test = fetch_mnist()
 # Normalizing data. Default MNIST is not normalized
 X_train, X_test = X_train / 255-0.5, X_test / 255-0.5
 
-# Creating dataloader
-loader = MNISTloader(X_train, Y_train, batch_size=64)
+# Creating train dataloader
+trainloader = MNISTloader(X_train, Y_train, batch_size=64)
 
 epochs = 10
 losses = []
@@ -52,7 +59,7 @@ for i in range(0, epochs):
 
     # Need to reset iterator every epoch
     loader.iter = 0
-    for images, labels in loader:
+    for images, labels in trainloader:
 
         optimizer.zero_grad()
 
@@ -66,8 +73,15 @@ for i in range(0, epochs):
 
         optimizer.step()
 
-    print('Running Loss:', running_loss/len(loader))
-    losses.append(running_loss/len(loader))
+    print('Running Loss:', running_loss/len(trainloader))
+    losses.append(running_loss/len(trainloader))
 
+trainloader.iter = 0
 plt.plot(range(0, epochs), losses)
 plt.show()
+
+
+testloader = MNISTloader(X_test, Y_test, batch_size=64)
+
+eval_acc(model, trainloader)
+eval_acc(model, testloader)
