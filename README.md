@@ -1,8 +1,32 @@
-# TAADL: Technically An AutoDiff Library
+# MiniNN
 
-Goals here:
-- Drop the need for explicit computational graph
-- Allow nodes to support arrays directly
-- VJPs are a bit messy in places
+MiniNN is a small neural network library. It is an Automatic Differentiation library with basic neural network code. 
 
 
+# Implemented
+
+## Layers
+- Linear
+- Dropout 
+- LogSoftmax
+
+## Activations
+- ReLU
+- Sigmoid
+- Tanh
+
+## Optimizers
+- Stochastic Gradient Descent
+- Adam
+
+## Loss Functions
+- CrossEntropyLoss
+- MSELoss
+
+
+# Examples
+
+# Future Work
+- Add convolutional layers
+- Add support for Gpus
+- Train Cifar-10 model
