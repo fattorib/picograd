@@ -1,6 +1,6 @@
 # MiniNN
 
-MiniNN is a small neural network library. It is an Automatic Differentiation library with basic neural network code. 
+MiniNN is a (mini) neural network library. It is an Automatic Differentiation library with basic neural network code. 
 
 
 # Implemented
