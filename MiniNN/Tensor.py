@@ -48,6 +48,9 @@ class Tensor():
 
         self.gpu_flag = False
 
+        # Gpu code to be added in future
+        self.device = 'cpu'
+
     def zero_grad(self):
         self.grad = np.zeros_like(self.value, dtype=np.float32)
 

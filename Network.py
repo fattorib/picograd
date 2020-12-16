@@ -15,9 +15,9 @@ from Model_Eval import *
 class Network():
 
     def __init__(self):
-        self.fc1 = Linear(784, 256, bias=True)
-        self.fc2 = Linear(256, 256, bias=True)
-        self.fc3 = Linear(256, 10)
+        self.fc1 = Linear(784, 800, bias=True)
+        self.fc2 = Linear(800, 800, bias=True)
+        self.fc3 = Linear(800, 10)
         self.dropout = Dropout(p=0.5)
         self.logsoftmax = LogSoftmax()
         self.relu = ReLU()
@@ -54,10 +54,10 @@ criterion = NLLLoss()
 # Batching code
 
 # Regular MNIST
-X_train, Y_train, X_test, Y_test = fetch_mnist()
+# X_train, Y_train, X_test, Y_test = fetch_mnist()
 
 # Fashion MNIST
-# X_train, Y_train, X_test, Y_test = fetch_fashion_mnist()
+X_train, Y_train, X_test, Y_test = fetch_fashion_mnist()
 
 # Normalizing data. Default MNIST is not normalized
 X_train, X_test = X_train / 255-0.5, X_test / 255-0.5
@@ -65,7 +65,7 @@ X_train, X_test = X_train / 255-0.5, X_test / 255-0.5
 # Creating train dataloader
 trainloader = MNISTloader(X_train, Y_train, batch_size=64)
 
-epochs = 10
+epochs = 15
 losses = []
 
 for i in range(0, epochs):
