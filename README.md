@@ -23,8 +23,8 @@ MiniNN is a (mini) neural network library. It is an Automatic Differentiation li
 - CrossEntropyLoss
 - MSELoss
 
-
 # Examples
+Adding a collection of examples. See MNIST example [here](Examples/train_MNIST.ipynb)
 
 # Future Work
 - Add convolutional layers
