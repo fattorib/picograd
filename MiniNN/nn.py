@@ -1,6 +1,6 @@
 import numpy as np
-from Tensor import Tensor
-from Loss import MSELoss
+from MiniNN.Tensor import Tensor
+from MiniNN.Loss import MSELoss
 
 
 class Linear():

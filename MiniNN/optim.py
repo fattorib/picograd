@@ -1,4 +1,4 @@
-from Tensor import *
+from MiniNN.Tensor import *
 
 
 class Optimizer():

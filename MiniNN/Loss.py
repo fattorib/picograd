@@ -1,5 +1,5 @@
 # loss functions go here
-from Tensor import Tensor
+from MiniNN.Tensor import Tensor
 import numpy as np
 # from nn import LogSoftmax
 
