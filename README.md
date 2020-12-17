@@ -1,92 +1,32 @@
-# TAADL: Technically An AutoDiff Library
-A library for computing the gradients of vector to scalar functions using [Reverse Mode Automatic Differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation#Reverse_accumulation)
-- Gradient computation of most basic functions
-- Full computational graph functionality 
-- Overloaded operators
+# MiniNN
 
-While this library works, I wouldn't reccomend using it if you care about:
-- Speed
-- Code that is understandable
-- Easy debugging
+MiniNN is a (mini) neural network library. It is an Automatic Differentiation library with basic neural network code. 
 
-## Examples
-- Computing derivative of the function, <img src="https://render.githubusercontent.com/render/math?math=f(x_1,x_2) = \ln(x_1) %2B x_1 x_2 - \sin(x_2)"> at <img src="https://render.githubusercontent.com/render/math?math=(x_1,x_2) = (2,5)">
 
-```
-from Node import *
-from Computational_Graph import *
-import Grad_ops as ops
+# Implemented
 
-#Initialize computational graph
-graph = Computational_Graph()
+## Layers
+- Linear
+- Dropout 
+- LogSoftmax
 
-def f(x1, x2):
-    return ops.ln(x1) + x1*x2 - ops.sin(x2)
+## Activations
+- ReLU
+- Sigmoid
+- Tanh
 
-a = Variable(2,graph)
-b = Variable(5,graph)
+## Optimizers
+- Stochastic Gradient Descent
+- Adam
 
-# Adding values to the computational graph
-graph(a)
-graph(b)
-print(f(a,b).value)
-11.652
-grad = graph.backward()
-print(grad)
-[5.5, 1.716]
-```
+## Loss Functions
+- CrossEntropyLoss
+- MSELoss
 
-- Computing derivative of the function, <img src="https://render.githubusercontent.com/render/math?math=f(x_1,x_2) = x_1 x_2 - e^{x_1 - x_2}\sin(x_1)"> at <img src="https://render.githubusercontent.com/render/math?math=(x_1,x_2) = (3,2)">
-```
-from Node import *
-from Computational_Graph import *
-import Grad_ops as ops
+# Examples
+Adding a collection of examples. See MNIST example [here](Examples/train_MNIST.ipynb)
 
-#Initialize computational graph
-graph = Computational_Graph()
-
-def g(x1, x2):
-        return x1*x2 - ops.exp(x1-x2)*ops.sin(x1)
-        
-a = Variable(3,graph)
-b = Variable(2,graph)
-# Adding values to the computational graph
-graph(a)
-graph(b)
-print(g(a,b).value)
-5.616
-grad = graph.backward()
-print(grad)
-[4.307, 3.383]
-```
-## Optimization
-TAADL also has a basic optimization library implemented:
-```
-from Tensor import *
-from Node import *
-import Computational_Graph as G
-import Tensor_ops as T
-from Optimizers import SGD
-
-def f(x):
-    return T.dot(x, x)
-    
-graph = G.Computational_Graph()
-x = Tensor([1, 1, 1], graph, requires_grad=True)
-lr = 0.1
-steps = 100
-optimizer = SGD(graph, lr)
-
-for i in range(0, steps):
-    optimizer.zero_grad()
-    value = f(x)
-    grad = graph.backward()
-    optimizer.step(grad, x)
-    
-print(value, x)
-9.077065306927186e-19 [2.03703598e-10 4.07407195e-10 6.11110793e-10]
-```
-
-## Future:
-- Improve how the graph and values interface
-
+# Future Work
+- Add convolutional layers (requires adding MaxPool2d, AvgPool2d, Conv2d)
+- Add support for Gpus (CuPY looks like a good start)
+- Train Cifar-10 model
