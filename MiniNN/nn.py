@@ -119,7 +119,8 @@ class Softmax():
                         children=(input,), fun='SoftmaxBackward')
 
         def _backward():
-            input.grad += (output.grad)*(val)*(1-exp)
+            R_bar = -np.sum(output.grad*exp, axis=1, keepdims=True)/(sum**2)
+            input.grad += (output.grad)*(exp/sum) + R_bar*exp
 
         output._backward = _backward
 
@@ -131,7 +132,6 @@ class LogSoftmax():
     @ staticmethod
     def __call__(input, dim):
 
-        # Overflow here.
         exp = np.exp(input.value)
         sum = np.sum(np.exp(input.value), 1)
         sum = np.expand_dims(sum, 1)
