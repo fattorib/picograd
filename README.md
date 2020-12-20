@@ -27,6 +27,6 @@ MiniNN is a (mini) neural network library. It is an Automatic Differentiation li
 Adding a collection of examples. See MNIST example [here](Examples/train_MNIST.ipynb)
 
 # Future Work
-- Add convolutional layers
-- Add support for Gpus
+- Add convolutional layers (requires adding MaxPool2d, AvgPool2d, Conv2d)
+- Add support for Gpus (CuPY looks like a good start)
 - Train Cifar-10 model
