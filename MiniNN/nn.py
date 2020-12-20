@@ -47,9 +47,10 @@ class Dropout():
         else:
             return input
 
+# -------Activations
+
 
 class ReLU():
-
     @staticmethod
     def __call__(input):
 
@@ -107,6 +108,8 @@ class Tanh():
 
         return output
 
+# --------Softmaxes
+
 
 class Softmax():
     @ staticmethod
@@ -153,6 +156,31 @@ class LogSoftmax():
         output._backward = _backward
 
         return output
+
+
+# -------Convolutional Layers
+class AvgPool2d():
+
+    def __init__(self, kernel_size):
+        self.kernel_size = kernel_size
+
+    def __call__(self, input):
+        return None
+
+
+class MaxPool2d():
+
+    def __init__(self, kernel_size):
+        self.kernel_size = kernel_size
+
+    def __call__(self, input):
+        return None
+
+
+class Conv2d():
+    @ staticmethod
+    def __call__(input, dim):
+        return None
 
 
 if __name__ == "__main__":
