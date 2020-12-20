@@ -132,7 +132,6 @@ class LogSoftmax():
     @ staticmethod
     def __call__(input, dim):
 
-        # Overflow here.
         exp = np.exp(input.value)
         sum = np.sum(np.exp(input.value), 1)
         sum = np.expand_dims(sum, 1)
