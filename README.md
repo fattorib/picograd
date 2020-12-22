@@ -30,3 +30,4 @@ Adding a collection of examples. See MNIST example [here](Examples/train_MNIST.i
 - Add convolutional layers (requires adding MaxPool2d, AvgPool2d, Conv2d)
 - Add support for Gpus (CuPY looks like a good start)
 - Train Cifar-10 model
+- RNN of some sort 
