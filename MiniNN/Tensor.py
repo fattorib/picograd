@@ -1,6 +1,15 @@
 import numpy as np
 import cupy as cp
 
+# From TinyGrad, needed for proper bias
+
+
+def unbroadcast(out, in_sh):
+    # adjoint operation to broadcast is sum. Need to sum all axis with 1 = in_sh[i] < out.shape[i]
+    sum_axis = tuple([i for i in range(len(in_sh)) if in_sh[i]
+                      == 1 and out.shape[i] > 1]) if in_sh != (1,) else None
+    return out.sum(axis=sum_axis).reshape(in_sh)
+
 
 class Tensor():
     def __init__(self, value, fun='', children=()):
@@ -76,8 +85,13 @@ class Tensor():
 
         def _backward():
             # Broadcasting is unhappy with +=
-            self.grad = self.grad + output.grad
-            other.grad = other.grad + output.grad
+            self.grad = output.grad + self.grad
+            other.grad += unbroadcast(output.grad, other.grad.shape)
+
+            # self.grad += output.grad
+
+            # # This is the problematic line when doing backprop on (Wx) + b
+            # other.grad += output.grad
 
         output._backward = _backward
 
