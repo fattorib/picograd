@@ -1,11 +1,12 @@
 import numpy as np
 import cupy as cp
 
-# From TinyGrad, needed for proper bias
+# Unbroadcasting is needed for backward passes on broadcasted tensors.
+# Useful resource: http://coldattic.info/post/116/
 
 
 def unbroadcast(out, in_sh):
-    # adjoint operation to broadcast is sum. Need to sum all axis with 1 = in_sh[i] < out.shape[i]
+    # Sum along the batch axis and then reshape after
     sum_axis = tuple([i for i in range(len(in_sh)) if in_sh[i]
                       == 1 and out.shape[i] > 1]) if in_sh != (1,) else None
     return out.sum(axis=sum_axis).reshape(in_sh)
@@ -65,6 +66,11 @@ class Tensor():
 
     def expand_dim(self, axis):
         self.value = np.expand_dims(self.value, axis)
+        self.shape = self.value.shape
+
+    def reshape(self, shape):
+        self.value = self.value.reshape(shape)
+        self.grad = self.grad.reshape(shape)
         self.shape = self.value.shape
 
     def gpu(self):

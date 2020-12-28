@@ -159,6 +159,10 @@ class LogSoftmax():
 
 
 # -------Convolutional Layers
+# Simplifying assumptions: Square Kernels
+#
+#
+#
 class AvgPool2d():
 
     def __init__(self, kernel_size):
