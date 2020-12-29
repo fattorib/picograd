@@ -1,7 +1,9 @@
 # Utility functions
+import numpy as np
 
 
-# ------Broadcasting------------
+# ----------Broadcasting------------
+
 # Unbroadcasting is needed for backward passes on broadcasted tensors.
 # Useful resource: http://coldattic.info/post/116/
 
@@ -25,6 +27,15 @@ def pool_unstack(filter_stack, kernel_size, stride):
     return None
 
 
-def pad_filters():
-    # Use for padding filters to ensure proper kernels
-    return None
+def pad_filters(filter_stack):
+    # Use for padding filters to ensure proper kernels. Using zero padding
+    padded_arr = np.pad(filter_stack, (1, 1), 'constant',
+                        constant_values=(0, 0))
+    return padded_arr[1:-1]
+
+
+if __name__ == "__main__":
+    filter_stack = np.random.rand(1, 10, 10)
+    # print(filter_stack)
+
+    print(pad_filters(filter_stack))
