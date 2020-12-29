@@ -14,9 +14,17 @@ def unbroadcast(out, in_sh):
 
 # ------------Pooling-------------
 
-def pool_stack():
+def pool_stack(filters, kernel_size, stride):
+    # Take our filters and convert them into a 'stack' of kernel_size arrays
+    # Useful as this allows us to get argmax and max for backprop in MaxPool2d
     return None
 
 
-def pool_unstack():
+def pool_unstack(filter_stack, kernel_size, stride):
+    # Use after pool_stack to recover original filter shape
+    return None
+
+
+def pad_filters():
+    # Use for padding filters to ensure proper kernels
     return None
