@@ -1,15 +1,6 @@
 import numpy as np
 import cupy as cp
-
-# Unbroadcasting is needed for backward passes on broadcasted tensors.
-# Useful resource: http://coldattic.info/post/116/
-
-
-def unbroadcast(out, in_sh):
-    # Sum along the batch axis and then reshape after
-    sum_axis = tuple([i for i in range(len(in_sh)) if in_sh[i]
-                      == 1 and out.shape[i] > 1]) if in_sh != (1,) else None
-    return out.sum(axis=sum_axis).reshape(in_sh)
+from MiniNN.utils import unbroadcast
 
 
 class Tensor():
@@ -69,6 +60,7 @@ class Tensor():
         self.shape = self.value.shape
 
     def reshape(self, shape):
+        # Need to change the shape of gradients on the backward pass
         self.value = self.value.reshape(shape)
         self.grad = self.grad.reshape(shape)
         self.shape = self.value.shape
@@ -90,15 +82,8 @@ class Tensor():
                         children=(self, other), fun='AddBackward')
 
         def _backward():
-            # Broadcasting is unhappy with +=
             self.grad = output.grad + self.grad
             other.grad += unbroadcast(output.grad, other.grad.shape)
-
-            # self.grad += output.grad
-
-            # # This is the problematic line when doing backprop on (Wx) + b
-            # other.grad += output.grad
-
         output._backward = _backward
 
         return output
