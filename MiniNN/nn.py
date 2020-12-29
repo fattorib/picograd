@@ -139,11 +139,6 @@ class LogSoftmax():
         sum = np.sum(np.exp(input.value), 1)
         sum = np.expand_dims(sum, 1)
         val = np.log(exp/sum)
-        # def logsumexp(x):
-        #     c = x.max(axis=1)
-        #     return c + np.log(np.exp(x-c.reshape((-1, 1))).sum(axis=1))
-
-        # val = input.value - logsumexp(input.value).reshape((-1, 1))
 
         output = Tensor(val,
                         children=(input,), fun='LogSoftmaxBackward')
@@ -158,27 +153,93 @@ class LogSoftmax():
         return output
 
 
-# -------Convolutional Layers
-# Simplifying assumptions: Square Kernels
+# ---------Convolutional Layers---------
+# Simplifying assumptions: Square Kernels, no stride overlap
 #
 #
 #
 class AvgPool2d():
 
-    def __init__(self, kernel_size):
+    def __init__(self, kernel_size, stride, pad):
         self.kernel_size = kernel_size
+        self.stride = stride
+        # Check if shape of input is div by 2, if not, need to pad
+        self.pad = pad
 
     def __call__(self, input):
-        return None
+
+        m, n = input.shape[:2]
+        ky, kx = self.kernel_size
+
+        def _ceil(x, y): return int(np.ceil(x/float(y)))
+
+        if self.pad:
+            ny = _ceil(m, ky)
+            nx = _ceil(n, kx)
+            size = (ny*ky, nx*kx)+input.shape[2:]
+            input_pad = np.full(size, np.nan)
+            input_pad[:m, :n, ...] = input.value
+
+        else:
+            ny = m//ky
+            nx = n//kx
+            input_pad = input.value[:ny*ky, :nx*kx, ...]
+
+        new_shape = (ny, ky, nx, kx)+input.shape[2:]
+        val = np.nanmean(input_pad.reshape(new_shape), axis=(1, 3))
+
+        output = Tensor(val,
+                        children=(input,), fun='AvgPool2dBackward')
+
+        def _backward():
+            input.grad += (output.grad)*(1/(kx*ky))
+
+        output._backward = _backward
+
+        return output
 
 
 class MaxPool2d():
 
-    def __init__(self, kernel_size):
+    def __init__(self, kernel_size, stride, pad):
         self.kernel_size = kernel_size
+        self.stride = stride
+        # Check if shape of input is div by 2, if not, need to pad
+        self.pad = pad
 
     def __call__(self, input):
-        return None
+
+        m, n = input.shape[:2]
+        ky, kx = self.kernel_size
+
+        def _ceil(x, y): return int(np.ceil(x/float(y)))
+
+        if self.pad:
+            ny = _ceil(m, ky)
+            nx = _ceil(n, kx)
+            size = (ny*ky, nx*kx)+input.shape[2:]
+            input_pad = np.full(size, np.nan)
+            input_pad[:m, :n, ...] = input.value
+
+        else:
+            ny = m//ky
+            nx = n//kx
+            input_pad = input.value[:ny*ky, :nx*kx, ...]
+
+        new_shape = (ny, ky, nx, kx)+input.shape[2:]
+        val = np.nanmax(input_pad.reshape(new_shape), axis=(1, 3))
+
+        # Need a way to get the indices where max is obtained
+
+        output = Tensor(val,
+                        children=(input,), fun='MaxPool2dBackward')
+
+        def _backward():
+            input.grad += (output.grad)
+
+        output._backward = _backward
+
+        return output
 
 
 class Conv2d():
