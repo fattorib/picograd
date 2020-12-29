@@ -143,7 +143,6 @@ class TestTensorBasics(unittest.TestCase):
         torch_out, w_torch_grad, b_torch_grad = pytorch_backward()
 
         np.testing.assert_allclose(w_grad, w_torch_grad, atol=1e-6)
-        # Gradients are being broadcasted in a weird way
         np.testing.assert_allclose(b_grad, b_torch_grad, atol=1e-6)
         np.testing.assert_allclose(out, torch_out, atol=1e-6)
 
