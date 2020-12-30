@@ -1,5 +1,6 @@
 import numpy as np
 import cupy as cp
+from MiniNN.utils import unbroadcast
 
 
 class Tensor():
@@ -58,6 +59,12 @@ class Tensor():
         self.value = np.expand_dims(self.value, axis)
         self.shape = self.value.shape
 
+    def reshape(self, shape):
+        # Need to change the shape of gradients on the backward pass
+        self.value = self.value.reshape(shape)
+        self.grad = self.grad.reshape(shape)
+        self.shape = self.value.shape
+
     def gpu(self):
         # Pass value and grad to gpu
         self.value = cp.asarray(self.value)
@@ -75,10 +82,8 @@ class Tensor():
                         children=(self, other), fun='AddBackward')
 
         def _backward():
-            # Broadcasting is unhappy with +=
-            self.grad = self.grad + output.grad
-            other.grad = other.grad + output.grad
-
+            self.grad = output.grad + self.grad
+            other.grad += unbroadcast(output.grad, other.grad.shape)
         output._backward = _backward
 
         return output
@@ -208,7 +213,7 @@ class Tensor():
 
     def matmul(self, weight):
         output = Tensor(np.matmul(self.value, (weight.value)),
-                        children=(self, weight), fun='MatmulBackard')
+                        children=(self, weight), fun='MatmulBackward')
 
         def _backward():
             self.grad += np.matmul(output.grad, np.transpose(weight.value))
@@ -223,7 +228,8 @@ class Tensor():
         return ((self**2).sum())**(1/2)
 
     def exp(self):
-        output = Tensor(np.exp(self.value), children=(self,), fun='ExpBackard')
+        output = Tensor(np.exp(self.value), children=(
+            self,), fun='ExpBackward')
 
         def _backward():
             self.grad += output.grad*np.exp(self.value)
@@ -233,7 +239,8 @@ class Tensor():
         return output
 
     def log(self):
-        output = Tensor(np.log(self.value), children=(self,), fun='LogBackard')
+        output = Tensor(np.log(self.value), children=(
+            self,), fun='LogBackward')
 
         def _backward():
             self.grad += output.grad*(self.value)**(-1)
@@ -241,6 +248,10 @@ class Tensor():
         output._backward = _backward
 
         return output
+
+    def max(self, *axis):
+        # TBD
+        return None
 
     @ staticmethod
     def zeros(shape):

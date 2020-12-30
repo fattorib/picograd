@@ -47,9 +47,10 @@ class Dropout():
         else:
             return input
 
+# -------Activations
+
 
 class ReLU():
-
     @staticmethod
     def __call__(input):
 
@@ -107,6 +108,8 @@ class Tanh():
 
         return output
 
+# --------Softmaxes
+
 
 class Softmax():
     @ staticmethod
@@ -136,11 +139,6 @@ class LogSoftmax():
         sum = np.sum(np.exp(input.value), 1)
         sum = np.expand_dims(sum, 1)
         val = np.log(exp/sum)
-        # def logsumexp(x):
-        #     c = x.max(axis=1)
-        #     return c + np.log(np.exp(x-c.reshape((-1, 1))).sum(axis=1))
-
-        # val = input.value - logsumexp(input.value).reshape((-1, 1))
 
         output = Tensor(val,
                         children=(input,), fun='LogSoftmaxBackward')
@@ -153,6 +151,10 @@ class LogSoftmax():
         output._backward = _backward
 
         return output
+
+
+# ---------Convolutional Layers---------
+# lol
 
 
 if __name__ == "__main__":
