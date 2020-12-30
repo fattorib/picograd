@@ -213,7 +213,7 @@ class Tensor():
 
     def matmul(self, weight):
         output = Tensor(np.matmul(self.value, (weight.value)),
-                        children=(self, weight), fun='MatmulBackard')
+                        children=(self, weight), fun='MatmulBackward')
 
         def _backward():
             self.grad += np.matmul(output.grad, np.transpose(weight.value))
@@ -228,7 +228,8 @@ class Tensor():
         return ((self**2).sum())**(1/2)
 
     def exp(self):
-        output = Tensor(np.exp(self.value), children=(self,), fun='ExpBackard')
+        output = Tensor(np.exp(self.value), children=(
+            self,), fun='ExpBackward')
 
         def _backward():
             self.grad += output.grad*np.exp(self.value)
@@ -238,7 +239,8 @@ class Tensor():
         return output
 
     def log(self):
-        output = Tensor(np.log(self.value), children=(self,), fun='LogBackard')
+        output = Tensor(np.log(self.value), children=(
+            self,), fun='LogBackward')
 
         def _backward():
             self.grad += output.grad*(self.value)**(-1)
@@ -246,6 +248,10 @@ class Tensor():
         output._backward = _backward
 
         return output
+
+    def max(self, *axis):
+        # TBD
+        return None
 
     @ staticmethod
     def zeros(shape):
