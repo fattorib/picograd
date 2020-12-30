@@ -67,7 +67,7 @@ for e in range(1, epochs+1):
         loss.backward()
         optimizer.step()
 
-print(running_loss/len(trainloader))
+    print(running_loss/len(trainloader))
 
 
 # Evaluate model on test data
