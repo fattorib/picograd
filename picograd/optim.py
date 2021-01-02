@@ -1,4 +1,4 @@
-from MiniNN.Tensor import *
+from picograd.Tensor import *
 
 
 class Optimizer():

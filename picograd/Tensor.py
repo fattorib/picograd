@@ -1,18 +1,17 @@
 import numpy as np
-import cupy as cp
-from MiniNN.utils import unbroadcast
+from picograd.utils import unbroadcast
 
 
 class Tensor():
-    def __init__(self, value, fun='', children=()):
+    def __init__(self, value, fun='', parents=()):
         """
 
         Parameters
         ----------
         value : np.array(float64)
-            Value at node
-        children : Node
-            Children node(s). Note that some references will call this node the 'Parent'
+            Value at node. Held as numpy array
+        parents : Node
+            Parent node(s). 
         fun : str
             Primitive function at node
         grad: float
@@ -35,12 +34,11 @@ class Tensor():
             self.value = value
             self.shape = self.value.shape
 
-        # This is buggy
         elif type(value) != list and type(value) != np.ndarray:
             self.value = np.array(value, dtype=np.float32)
             self.shape = (1,)
 
-        self.children = set(children)
+        self.parents = set(parents)
         self.fun = fun
 
         self._backward = lambda: None
@@ -60,26 +58,25 @@ class Tensor():
         self.shape = self.value.shape
 
     def reshape(self, shape):
-        # Need to change the shape of gradients on the backward pass
-        self.value = self.value.reshape(shape)
-        self.grad = self.grad.reshape(shape)
-        self.shape = self.value.shape
 
-    def gpu(self):
-        # Pass value and grad to gpu
-        self.value = cp.asarray(self.value)
-        self.grad = cp.asarray(self.grad)
-        self.gpu_flag = True
+        original_shape = self.value.shape
+        out = self.value.reshape(shape)
+        output = Tensor(out, parents=(self,), fun='ReshapeBackward')
+
+        def _backward():
+            self.grad = output.grad.reshape(original_shape)
+        output._backward = _backward
 
     def __repr__(self):
         return '(' + str(self.value) + ', grad_fn =<' + self.fun + '>)'
 
+    # ----------Overloaded Ops
     def __add__(self, other):
         if type(other) != Tensor:
             other = Tensor(other)
 
         output = Tensor(self.value + other.value,
-                        children=(self, other), fun='AddBackward')
+                        parents=(self, other), fun='AddBackward')
 
         def _backward():
             self.grad = output.grad + self.grad
@@ -93,7 +90,7 @@ class Tensor():
             other = Tensor(other)
 
         output = Tensor(self.value - other.value,
-                        children=(self, other), fun='SubBackward')
+                        parents=(self, other), fun='SubBackward')
 
         def _backward():
             self.grad += output.grad
@@ -108,7 +105,7 @@ class Tensor():
             other = Tensor(other)
 
         output = Tensor(self.value*other.value,
-                        children=(self, other), fun='MulBackward')
+                        parents=(self, other), fun='MulBackward')
 
         def _backward():
             # These are problematic
@@ -129,7 +126,7 @@ class Tensor():
         return self*-1.0
 
     def __pow__(self, other):
-        output = Tensor(self.value**other, children=(self,), fun='PowBackward')
+        output = Tensor(self.value**other, parents=(self,), fun='PowBackward')
 
         def _backward():
             self.grad += (other)*(self.value**(other-1))*output.grad
@@ -160,7 +157,7 @@ class Tensor():
         def build_graph(node):
             if node not in visited_nodes:
                 visited_nodes.add(node)
-                for child_nodes in node.children:
+                for child_nodes in node.parents:
                     build_graph(child_nodes)
                 topo_sorted_graph.append(node)
 
@@ -169,11 +166,11 @@ class Tensor():
         for node in reversed(topo_sorted_graph):
             node._backward()
 
+    # ----------Reduction Ops
     def sum(self, *axis):
         output = Tensor(np.sum(self.value, *axis),
-                        children=(self,), fun='SumBackward')
+                        parents=(self,), fun='SumBackward')
 
-        # Backward pass might be incorrect now. Yeah this isn't correct
         def _backward():
             # self.grad += np.ones_like(self.value)*output.grad
             self.grad += output.grad
@@ -184,7 +181,7 @@ class Tensor():
 
     def mean(self, *axis):
         output = Tensor(np.mean(self.value, *axis),
-                        children=(self,), fun='MeanBackward')
+                        parents=(self,), fun='MeanBackward')
 
         # Backward pass might be incorrect now?
         def _backward():
@@ -197,11 +194,16 @@ class Tensor():
 
         return output
 
+    def max(self, *axis):
+        # TBD
+        return None
+
+    # ----------------Matrix Ops
     def dot(self, weight):
 
         # Case when self is input,
         output = Tensor(self.value.dot(weight.value),
-                        children=(self, weight), fun='DotBackward')
+                        parents=(self, weight), fun='DotBackward')
 
         def _backward():
             self.grad += output.grad.dot(np.transpose(weight.value))
@@ -213,7 +215,7 @@ class Tensor():
 
     def matmul(self, weight):
         output = Tensor(np.matmul(self.value, (weight.value)),
-                        children=(self, weight), fun='MatmulBackward')
+                        parents=(self, weight), fun='MatmulBackward')
 
         def _backward():
             self.grad += np.matmul(output.grad, np.transpose(weight.value))
@@ -227,8 +229,9 @@ class Tensor():
         # Euclidean norm
         return ((self**2).sum())**(1/2)
 
+    # ----------Unary Ops
     def exp(self):
-        output = Tensor(np.exp(self.value), children=(
+        output = Tensor(np.exp(self.value), parents=(
             self,), fun='ExpBackward')
 
         def _backward():
@@ -239,7 +242,7 @@ class Tensor():
         return output
 
     def log(self):
-        output = Tensor(np.log(self.value), children=(
+        output = Tensor(np.log(self.value), parents=(
             self,), fun='LogBackward')
 
         def _backward():
@@ -249,32 +252,27 @@ class Tensor():
 
         return output
 
-    def max(self, *axis):
-        # TBD
-        return None
-
-    @ staticmethod
+    # ----------- Class Methods
+    @ classmethod
     def zeros(shape):
         return Tensor(np.zeros(shape, dtype=np.float32))
 
-    @ staticmethod
+    @ classmethod
     def ones(shape):
         return Tensor(np.ones(shape, dtype=np.float32))
 
-    @ staticmethod
-    def random(*shape):
-        return Tensor(np.random.rand(*shape).astype(np.float32))
+    @ classmethod
+    def random(shape):
+        return Tensor(np.random.rand(shape).astype(np.float32))
 
-    @ staticmethod
+    @ classmethod
     def eye(shape):
         return Tensor(np.eye(shape, dtype=np.float32))
 
-    @ staticmethod
-    def random_uniform(*shape):
+    @ classmethod
+    def random_uniform(shape):
 
         random_vals = np.random.uniform(-1, 1,
                                         size=shape)/np.sqrt(np.prod(shape))
-        # random_vals = np.random.uniform(-np.sqrt(np.prod(shape)), np.sqrt(np.prod(shape)),
-        #                                 size=shape)
 
         return Tensor(random_vals.astype(np.float32))

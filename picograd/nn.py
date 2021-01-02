@@ -1,6 +1,6 @@
 import numpy as np
-from MiniNN.Tensor import Tensor
-from MiniNN.Loss import MSELoss
+from picograd.Tensor import Tensor
+from picograd.Loss import MSELoss
 
 
 class Linear():
@@ -34,7 +34,7 @@ class Dropout():
             val = input.value*dropout_vals*(1/(1-self.p))
 
             output = Tensor(val,
-                            children=(input,), fun='DropoutBackward')
+                            parents=(input,), fun='DropoutBackward')
 
             def _backward():
                 # Same issue as ReLU
@@ -56,7 +56,7 @@ class ReLU():
 
         val = np.maximum(input.value, 0)
         output = Tensor(val,
-                        children=(input,), fun='ReLUBackward')
+                        parents=(input,), fun='ReLUBackward')
 
         def _backward():
             # These gotta be ones!!!!
@@ -81,7 +81,7 @@ class Sigmoid():
                            np.exp(input.value)/(1 + np.exp(input.value))
                            )
         output = Tensor(val,
-                        children=(input,), fun='SigmoidBackard')
+                        parents=(input,), fun='SigmoidBackard')
 
         def _backward():
             input.grad += output.grad*(val*(1-val))
@@ -99,7 +99,7 @@ class Tanh():
 
             val = np.tanh(input.value)
         output = Tensor(val,
-                        children=(input,), fun='TanhBackard')
+                        parents=(input,), fun='TanhBackard')
 
         def _backward():
             input.grad += output.grad*(1-(val**2))
@@ -119,7 +119,7 @@ class Softmax():
         sum = np.expand_dims(sum, 1)
         val = exp/sum
         output = Tensor(val,
-                        children=(input,), fun='SoftmaxBackward')
+                        parents=(input,), fun='SoftmaxBackward')
 
         def _backward():
             R_bar = -np.sum(output.grad*exp, axis=1, keepdims=True)/(sum**2)
@@ -141,7 +141,7 @@ class LogSoftmax():
         val = np.log(exp/sum)
 
         output = Tensor(val,
-                        children=(input,), fun='LogSoftmaxBackward')
+                        parents=(input,), fun='LogSoftmaxBackward')
 
         # Complete credit to TinyGrad for this gradient...
         def _backward():

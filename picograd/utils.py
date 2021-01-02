@@ -1,11 +1,11 @@
 # Utility functions
 import numpy as np
 
-
 # ----------Broadcasting------------
 
 # Unbroadcasting is needed for backward passes on broadcasted tensors.
 # Useful resource: http://coldattic.info/post/116/
+
 
 def unbroadcast(out, in_sh):
     # Sum along the batch axis and then reshape after

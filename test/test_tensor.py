@@ -3,9 +3,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 import unittest
-from MiniNN.Tensor import Tensor
-from MiniNN.nn import *
-from MiniNN.Loss import NLLLoss, MSELoss
+from picograd.Tensor import Tensor
+from picograd.nn import *
+from picograd.Loss import NLLLoss, MSELoss
 
 # Classification weights
 x_init = np.random.uniform(-1, 1, size=(64, 1024))
