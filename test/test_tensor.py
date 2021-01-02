@@ -7,14 +7,16 @@ from picograd.Tensor import Tensor
 from picograd.nn import *
 from picograd.Loss import NLLLoss, MSELoss
 
-# Classification weights
-x_init = np.random.uniform(-1, 1, size=(64, 1024))
-weight_init = np.random.uniform(-1, 1, size=(1024, 50))
-bias_init = np.random.uniform(-1, 1, size=(1, 50))
-targets_init = np.random.randint(0, 50, size=(64,))
+# -----------Classification init
+# - Forward/Backward pass corresponded to 500 category classification problem
+# - Using a batch size of 512
+x_init = np.random.uniform(-1, 1, size=(512, 1024))
+weight_init = np.random.uniform(-1, 1, size=(1024, 500))
+bias_init = np.random.uniform(-1, 1, size=(1, 500))
+targets_init = np.random.randint(0, 500, size=(512,))
 
-# Regression weights
-y_init = np.random.uniform(-1, 1, size=(64, 1))
+# -----------Regression init
+y_init = np.random.uniform(-1, 1, size=(512, 1))
 weight_regression_init = np.random.uniform(-1, 1, size=(1024, 1))
 bias_regression_init = np.random.uniform(-1, 1, size=(1, 1))
 
@@ -59,7 +61,7 @@ class TestTensorBasics(unittest.TestCase):
             bias = Tensor(bias_init)
 
             # Making target tensor
-            targets = np.zeros((len(targets_init), 50), np.float32)
+            targets = np.zeros((len(targets_init), 500), np.float32)
             targets[range(targets.shape[0]), targets_init] = 1
             targets = Tensor(targets)
 
