@@ -59,7 +59,6 @@ class ReLU():
                         parents=(input,), fun='ReLUBackward')
 
         def _backward():
-            # These gotta be ones!!!!
             input.grad += output.grad*((val > 0).astype(np.float32))
 
         output._backward = _backward
@@ -108,7 +107,7 @@ class Tanh():
 
         return output
 
-# --------Softmaxes
+# --------Softmaxe Layers
 
 
 class Softmax():
@@ -155,35 +154,3 @@ class LogSoftmax():
 
 # ---------Convolutional Layers---------
 # lol
-
-
-if __name__ == "__main__":
-
-    x = Tensor([[0.001, 0.2, -1, 3], [3.2, 1, 3, 1]])
-
-    softmax = Softmax()
-
-    y = softmax(x, dim=1)
-
-    print(y)
-
-    actual_out = Tensor([[1, 2, 3, 4], [3.2, 1, 3, 1]])
-
-    mse = MSELoss()
-    loss = mse(y, actual_out)
-    loss.backward()
-    print(x.grad)
-
-    import torch
-
-    x = torch.tensor([[0.001, 0.2, -1, 3], [3.2, 1, 3, 1]], requires_grad=True)
-    softmax = torch.nn.Softmax(dim=1)
-    y = softmax(x)
-    print(y)
-
-    actual_out = torch.tensor(
-        [[1, 2, 3, 4], [3.2, 1, 3, 1]], requires_grad=True)
-    mse = torch.nn.MSELoss()
-    loss = mse(y, actual_out)
-    loss.backward()
-    print(x.grad)

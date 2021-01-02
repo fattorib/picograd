@@ -79,7 +79,7 @@ class Tensor():
                         parents=(self, other), fun='AddBackward')
 
         def _backward():
-            self.grad = output.grad + self.grad
+            self.grad += unbroadcast(output.grad, self.grad.shape)
             other.grad += unbroadcast(output.grad, other.grad.shape)
         output._backward = _backward
 
@@ -93,8 +93,8 @@ class Tensor():
                         parents=(self, other), fun='SubBackward')
 
         def _backward():
-            self.grad += output.grad
-            other.grad += -output.grad
+            self.grad += unbroadcast(output.grad, self.grad.shape)
+            other.grad -= unbroadcast(output.grad, other.grad.shape)
 
         output._backward = _backward
 
@@ -108,9 +108,10 @@ class Tensor():
                         parents=(self, other), fun='MulBackward')
 
         def _backward():
-            # These are problematic
-            self.grad += (output.grad)*other.value
-            other.grad += (output.grad)*self.value
+            self.grad += unbroadcast((output.grad) *
+                                     other.value, self.grad.shape)
+            other.grad += unbroadcast((output.grad)
+                                      * self.value, other.grad.shape)
 
         output._backward = _backward
 
@@ -262,7 +263,7 @@ class Tensor():
         return Tensor(np.ones(shape, dtype=np.float32))
 
     @ classmethod
-    def random(shape):
+    def random(*shape):
         return Tensor(np.random.rand(shape).astype(np.float32))
 
     @ classmethod
@@ -270,7 +271,7 @@ class Tensor():
         return Tensor(np.eye(shape, dtype=np.float32))
 
     @ classmethod
-    def random_uniform(shape):
+    def random_uniform(*shape):
 
         random_vals = np.random.uniform(-1, 1,
                                         size=shape)/np.sqrt(np.prod(shape))
