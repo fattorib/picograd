@@ -60,7 +60,7 @@ class TestTensorBasics(unittest.TestCase):
             weights = Tensor(weight_init)
             bias = Tensor(bias_init)
 
-            # Making target tensor
+            # Making target tensor - construction should be done within NLLLoss
             targets = np.zeros((len(targets_init), 500), np.float32)
             targets[range(targets.shape[0]), targets_init] = 1
             targets = Tensor(targets)

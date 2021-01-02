@@ -72,8 +72,10 @@ for e in range(1, epochs+1):
 
 # Evaluate model on test data
 accuracy = 0
-# Turning off gradient tracking
+# Turning off dropout
 model.eval()
+
+# Don't track gradients
 with torch.no_grad():
     for inputs, labels in testloader:
         inputs, labels = inputs.cuda(), labels.cuda()
