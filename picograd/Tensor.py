@@ -11,7 +11,7 @@ class Tensor():
         value : np.array(float64)
             Value at node. Held as numpy array
         parents : Node
-            Parent node(s). 
+            Parent node(s).
         fun : str
             Primitive function at node
         grad: float
@@ -254,27 +254,27 @@ class Tensor():
 
         return output
 
-    # ----------- Class Methods
-    @ classmethod
+    # ----------- Static Methods
+    @ staticmethod
     def zeros(shape):
         return Tensor(np.zeros(shape, dtype=np.float32))
 
-    @ classmethod
+    @ staticmethod
     def ones(shape):
         return Tensor(np.ones(shape, dtype=np.float32))
 
-    @ classmethod
+    @ staticmethod
     def random(*shape):
-        return Tensor(np.random.rand(shape).astype(np.float32))
+        return Tensor(np.random.rand(*shape).astype(np.float32))
 
-    @ classmethod
+    @ staticmethod
     def eye(shape):
         return Tensor(np.eye(shape, dtype=np.float32))
 
-    @ classmethod
+    @ staticmethod
     def random_uniform(*shape):
 
-        random_vals = np.random.uniform(-1, 1,
-                                        size=shape)/np.sqrt(np.prod(shape))
+        random_vals = (np.random.uniform(-1, 1,
+                                         size=shape))/np.sqrt(np.prod(shape))
 
         return Tensor(random_vals.astype(np.float32))
