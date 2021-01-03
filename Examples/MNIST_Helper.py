@@ -1,6 +1,6 @@
 import numpy as np
 import os
-from MiniNN.Tensor import Tensor
+from picograd.Tensor import Tensor
 
 
 def fetch(url):
@@ -65,8 +65,8 @@ class MNISTloader():
             y = np.zeros((len(samp), 10), np.float32)
             y[range(y.shape[0]), Y] = 1
             self.raw_labels = Y
+            # return Tensor(X, requires_grad=False), Tensor(y, requires_grad=False)
             return Tensor(X), Tensor(y)
-
         else:
             raise StopIteration
 

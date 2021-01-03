@@ -25,9 +25,9 @@ testloader = DataLoader(test_data, batch_size=64, shuffle=True)
 class Network(nn.Module):
     def __init__(self):
         super().__init__()
-        self.fc1 = nn.Linear(784, 256)
-        self.fc2 = nn.Linear(256, 256)
-        self.fc3 = nn.Linear(256, 10)
+        self.fc1 = nn.Linear(784, 800)
+        self.fc2 = nn.Linear(800, 800)
+        self.fc3 = nn.Linear(800, 10)
         self.dropout = nn.Dropout(p=0.5)
 
     def forward(self, input):
@@ -47,7 +47,7 @@ model = Network()
 model.cuda()
 
 optimizer = torch.optim.Adam(model.parameters())
-epochs = 10
+epochs = 1
 
 for e in range(1, epochs+1):
 

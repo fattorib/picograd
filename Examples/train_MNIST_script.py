@@ -7,6 +7,7 @@ from picograd.Loss import NLLLoss
 from picograd.optim import SGD, Adam
 from Examples.MNIST_Helper import *
 from Examples.Model_Eval import *
+import time
 
 # defining network - following PyTorch structure. One of the network architectures used in original dropout paper
 
@@ -53,9 +54,10 @@ trainloader = MNISTloader(X_train, Y_train, batch_size=64)
 
 # Training
 
-epochs = 2
+epochs = 1
 losses = []
 
+t0 = time.time()
 for i in range(0, epochs):
     running_loss = 0
 
@@ -79,10 +81,11 @@ for i in range(0, epochs):
         print('Running Loss:', running_loss/len(trainloader))
 
     losses.append(running_loss/len(trainloader))
+t1 = time.time()
 
-
+print(
+    f'Training model for {epochs} epochs. Total time to train: {t1-t0:.2f} seconds')
 testloader = MNISTloader(X_test, Y_test, batch_size=64)
-testloader.iter = 0
 model.eval()
 print('Test Loss:')
 eval_acc(model, testloader)
