@@ -47,7 +47,7 @@ class Dropout():
         else:
             return input
 
-# -------Activations
+# -------Activations-------
 
 
 class ReLU():
@@ -60,6 +60,26 @@ class ReLU():
 
         def _backward():
             input.grad += output.grad*((val > 0).astype(np.float32))
+
+        output._backward = _backward
+
+        return output
+
+
+class LeakyReLU():
+    @staticmethod
+    def __call__(input, alpha=0.01):
+
+        val = np.maximum(input.value, alpha*input.value)
+        output = Tensor(val,
+                        parents=(input,), fun='LeakyReLUBackward')
+
+        grad = np.zeros_like(val)
+        grad[(val > 0)] = 1
+        grad[(val <= 0)] = alpha
+
+        def _backward():
+            input.grad += output.grad*(grad)
 
         output._backward = _backward
 
@@ -107,7 +127,7 @@ class Tanh():
 
         return output
 
-# --------Softmaxe Layers
+# --------Softmax Layers-------
 
 
 class Softmax():

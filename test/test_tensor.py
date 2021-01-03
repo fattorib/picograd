@@ -95,12 +95,6 @@ class TestTensorBasics(unittest.TestCase):
         torch_out, w_torch_grad, b_torch_grad = pytorch_backward()
 
         np.testing.assert_allclose(w_grad, w_torch_grad, atol=1e-6)
-        # Gradients were being broadcasted in a weird way
-        # print('Shape of Torch Bias grad:', b_torch_grad.shape)
-        # print('Shape of MiniNN Bias grad:', b_grad.shape)
-
-        # print('Shape of Torch weight grad:', w_torch_grad.shape)
-        # print('Shape of MiniNN weight grad:', w_grad.shape)
         np.testing.assert_allclose(b_grad, b_torch_grad, atol=1e-6)
         np.testing.assert_allclose(out, torch_out, atol=1e-6)
 

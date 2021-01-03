@@ -1,8 +1,8 @@
 # this is an example using picograd to train a fully-connected classifier on the MNIST data
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from picograd.Tensor import *
-from picograd.nn import Linear, ReLU, LogSoftmax, Dropout
+import picograd.nn as nn
 from picograd.Loss import NLLLoss
 from picograd.optim import SGD, Adam
 from Examples.MNIST_Helper import *
@@ -14,12 +14,12 @@ import time
 
 class Network():
     def __init__(self):
-        self.fc1 = Linear(784, 800, bias=True)
-        self.fc2 = Linear(800, 800, bias=True)
-        self.fc3 = Linear(800, 10)
-        self.dropout = Dropout(p=0.5)
-        self.logsoftmax = LogSoftmax()
-        self.relu = ReLU()
+        self.fc1 = nn.Linear(784, 800, bias=True)
+        self.fc2 = nn.Linear(800, 800, bias=True)
+        self.fc3 = nn.Linear(800, 10)
+        self.dropout = nn.Dropout(p=0.5)
+        self.logsoftmax = nn.LogSoftmax()
+        self.relu = nn.ReLU()
 
     def forward(self, input):
         x = self.relu(self.fc1(input))
@@ -54,7 +54,7 @@ trainloader = MNISTloader(X_train, Y_train, batch_size=64)
 
 # Training
 
-epochs = 1
+epochs = 2
 losses = []
 
 t0 = time.time()
