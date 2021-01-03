@@ -3,7 +3,7 @@ from picograd.utils import unbroadcast
 
 
 class Tensor():
-    def __init__(self, value, fun='', parents=()):
+    def __init__(self, value, fun='', parents=(), requires_grad=True):
         """
 
         Parameters
@@ -43,9 +43,9 @@ class Tensor():
 
         self._backward = lambda: None
 
-        self.grad = np.zeros_like(self.value, dtype=np.float32)
+        self.requires_grad = requires_grad
 
-        self.gpu_flag = False
+        self.grad = np.zeros_like(self.value, dtype=np.float32)
 
         # Gpu code to be added in future
         self.device = 'cpu'
@@ -165,7 +165,8 @@ class Tensor():
         build_graph(self)
 
         for node in reversed(topo_sorted_graph):
-            node._backward()
+            if node.requires_grad:
+                node._backward()
 
     # ----------Reduction Ops
     def sum(self, *axis):
