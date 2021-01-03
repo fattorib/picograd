@@ -154,3 +154,9 @@ class LogSoftmax():
 
 # ---------Convolutional Layers---------
 # lol
+
+if __name__ == '__main__':
+    x = Tensor.random_uniform(1, 784)
+    fc1 = Linear(784, 800, bias=True)
+
+    print(fc1(x))

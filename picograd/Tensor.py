@@ -70,7 +70,7 @@ class Tensor():
     def __repr__(self):
         return '(' + str(self.value) + ', grad_fn =<' + self.fun + '>)'
 
-    # ----------Overloaded Ops
+    # ----------Overloaded Ops----------
     def __add__(self, other):
         if type(other) != Tensor:
             other = Tensor(other)
@@ -168,7 +168,7 @@ class Tensor():
             if node.requires_grad:
                 node._backward()
 
-    # ----------Reduction Ops
+    # ----------Reduction Ops----------
     def sum(self, *axis):
         output = Tensor(np.sum(self.value, *axis),
                         parents=(self,), fun='SumBackward')
@@ -196,11 +196,25 @@ class Tensor():
 
         return output
 
-    def max(self, *axis):
-        # TBD
-        return None
+    def max(self, axis=1):
+        # get max idx for each row
+        max_idx = np.argmax(self.value, axis)
 
-    # ----------------Matrix Ops
+        max_arr = np.array([self.value[i, max_idx[i]]
+                            for i in range(len(self.value))], dtype=np.float32)
+
+        output = Tensor(max_arr, parents=(self,), fun='MaxBackward')
+        grad_arr = np.zeros_like(self.value)
+        for i in range(len(grad_arr)):
+            grad_arr[i, max_idx[i]] = 1
+
+        def _backward():
+            self.grad += grad_arr*output.grad
+
+        output._backward = _backward
+        return output
+
+    # ----------------Matrix Ops----------
     def dot(self, weight):
 
         # Case when self is input,
@@ -231,7 +245,7 @@ class Tensor():
         # Euclidean norm
         return ((self**2).sum())**(1/2)
 
-    # ----------Unary Ops
+    # ----------Unary Ops----------
     def exp(self):
         output = Tensor(np.exp(self.value), parents=(
             self,), fun='ExpBackward')
@@ -254,7 +268,7 @@ class Tensor():
 
         return output
 
-    # ----------- Static Methods
+    # -----------Static Methods----------
     @ staticmethod
     def zeros(shape):
         return Tensor(np.zeros(shape, dtype=np.float32))
