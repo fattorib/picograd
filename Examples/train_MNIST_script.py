@@ -54,7 +54,7 @@ trainloader = MNISTloader(X_train, Y_train, batch_size=64)
 
 # Training
 
-epochs = 2
+epochs = 10
 losses = []
 
 t0 = time.time()

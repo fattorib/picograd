@@ -14,9 +14,11 @@ class Optimizer():
 
 class SGD(Optimizer):
 
-    def __init__(self, parameters, lr):
+    def __init__(self, parameters, lr, momentum=0.9):
         self.parameters = parameters
         self.lr = lr
+        # Need to implement in training step - can be formatted similar to Adam
+        self.momentum = momentum
 
     def step(self):
         for parameter in self.parameters:
