@@ -54,12 +54,12 @@ You can do a fair amount with just the operations I have implemented. However, t
 ### 1. Adding more operations 
 If you wanted to train any sort of vision model, you would need to implement a 2d convolutional operation, as well as average and max pooling operations. If you wanted to train a transformer, you would need to implement a LayerNorm and a Concat operation. 
 
-Aside from this, implementing more loss functions could be helpful. Currently only Negative Log Likelihood loss and Mean-Squared Error loss are implemented. 
+Aside from this, adding more loss functions could be helpful. Currently only Negative Log Likelihood loss and Mean-Squared Error loss are implemented. 
 
 ### 2. Adding an accelerator
-In its current state, picograd only works on CPU. Training the MNIST model in the examples takes around 10-15 minutes. Training the exact same model on a GPU in PyTorch takes around 30 seconds. Yikes! Given that I don't have any background in C/C++, which is required for adding OpenCL or CUDA support, this will be a difficult task. 
+In its current state, picograd only works on CPU. Training the MNIST model in the examples takes around 10-15 minutes. Training the exact same model on a GPU in PyTorch takes around 30 seconds. Yikes! Given that I don't have any background in C/C++, which is required for adding OpenCL or CUDA support, this will be a difficult task...
 
 ### 3. Code Reformatting/MiniTorch
-As I was writing this up, I came across [MiniTorch](https://minitorch.github.io/), which describes itself as, "...a pure Python re-implementation of the Torch API designed to be simple, easy-to-read, tested, and incremental." In the future I plan on working through this and reformatting picograd to use the same structure as PyTorch. In its current state, adding new operations is a bit cumbersome and PyTorch makes this significantly easier.
+As I was writing this up, I came across [MiniTorch](https://minitorch.github.io/), which describes itself as, "...a pure Python re-implementation of the Torch API designed to be simple, easy-to-read, tested, and incremental." In the future I plan on working through this and reformatting picograd to use the same structure as PyTorch. 
 
  
