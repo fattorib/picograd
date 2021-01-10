@@ -1,7 +1,8 @@
 # Picograd - Fully connected neural networks in Python 
 
-<img src="https://github.com/fattorib/picograd/blob/picograd/pics/autodiff.png" width="4">
-
+<p align="center">
+<img src="https://github.com/fattorib/picograd/blob/picograd/pics/autodiff.png" width="500">
+</p>
 
 ## What is this?
 In the process of learning ML and PyTorch, I decided to try and write my own neural network package in Python. It has been (relatively) succesful. 
