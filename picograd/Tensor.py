@@ -47,9 +47,6 @@ class Tensor():
 
         self.grad = np.zeros_like(self.value, dtype=np.float32)
 
-        # Gpu code to be added in future
-        self.device = 'cpu'
-
     def zero_grad(self):
         self.grad = np.zeros_like(self.value, dtype=np.float32)
 
@@ -145,13 +142,13 @@ class Tensor():
     def backward(self):
         # Compute the backward pass starting at this node
 
-        # Always assume the the base gradient is 1
+        # We always assume the the base gradient is 1
         assert (
             self.shape == () or (self.shape[0] == 1)), "Backward pass only supported for vector to scalar functions"
 
         self.grad = np.array(1)
 
-        # Build the computational graph. Using Karpathy Micrograd fn
+        # Build the computational graph.
         visited_nodes = set()
         topo_sorted_graph = []
 
@@ -174,7 +171,6 @@ class Tensor():
                         parents=(self,), fun='SumBackward')
 
         def _backward():
-            # self.grad += np.ones_like(self.value)*output.grad
             self.grad += output.grad
 
         output._backward = _backward
@@ -214,10 +210,8 @@ class Tensor():
         output._backward = _backward
         return output
 
-    # ----------------Matrix Ops----------
+    # -----------Matrix Ops----------
     def dot(self, weight):
-
-        # Case when self is input,
         output = Tensor(self.value.dot(weight.value),
                         parents=(self, weight), fun='DotBackward')
 
@@ -241,11 +235,7 @@ class Tensor():
 
         return output
 
-    def norm(self):
-        # Euclidean norm
-        return ((self**2).sum())**(1/2)
-
-    # ----------Unary Ops----------
+    # ----------Elementwise Ops----------
     def exp(self):
         output = Tensor(np.exp(self.value), parents=(
             self,), fun='ExpBackward')
