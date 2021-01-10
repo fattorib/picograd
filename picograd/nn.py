@@ -1,6 +1,5 @@
 import numpy as np
 from picograd.Tensor import Tensor
-from picograd.Loss import MSELoss
 
 
 class Linear():
@@ -170,13 +169,3 @@ class LogSoftmax():
         output._backward = _backward
 
         return output
-
-
-# ---------Convolutional Layers---------
-# lol
-
-if __name__ == '__main__':
-    x = Tensor.random_uniform(1, 784)
-    fc1 = Linear(784, 800, bias=True)
-
-    print(fc1(x))
