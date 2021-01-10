@@ -21,7 +21,7 @@ For example, lets have two values `x=1` and `y=2`. If we add them together, we g
 - `grad`: `0`
 - `_backward`: A lambda function telling us how to update the gradients for `x` and `y`.
 
-If we call `z.backward()`, the backward method is called to compute all gradients. Ok, but what about the gradient of `z`? For backpropogation, the node from which backward() is called is set to have a gradient of `1`. Note that this means we can only use this for scalar valued functions. 
+If we call `z.backward()`, the backward method is called to compute all gradients. But what about the gradient of `z`? For backpropogation, the node from which backward() is called is set to have a gradient of `1`. Note that this means we can only use this for scalar valued functions. 
 
 Calling `z.backward()` builds the computational graph of all parent nodes starting at `z`. From this graph, we go through it in reversed topologically sorted order and apply the `_backward()` function for each node. EXPAND
 
