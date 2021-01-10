@@ -42,7 +42,7 @@ Using the above categories, I have implemented the following in picograd:
 
 With these operations, you can construct all the pieces required to create a fully connected neural network. Add in an optimizer (SGD and Adam implemented) and you train the network! See `Examples/train_MNIST.ipynb` for a neural network trained on MNIST.
 ### A note on broadcasting operations
-Subtle
+MISSING
 
 ## How would you improve on this?
 You can do a fair amount with just the operations I have implemented. However, there are a few different directions this project can go now:
