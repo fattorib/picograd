@@ -1,3 +1,3 @@
-# picograd - a small autodiff library in the spirit of PyTorch
+# Picograd - Fully connected neural networks in Python 
 
 ## Add explanations of stuff here
