@@ -1,6 +1,6 @@
 # Picograd - Fully connected neural networks in Python 
 
-![](./pics/autodiff.png)
+<img src="https://github.com/fattorib/picograd/blob/picograd/pics/autodiff.png" width="4">
 
 
 ## What is this?
