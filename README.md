@@ -8,15 +8,54 @@ Optimizing neural networks involves minimization of a cost function (the loss) f
 
 ## How does it work?
 Since what we are doing is computing the chain rule property at a bunch of nodes, we need a way to track how each node is transformed when an operation is applied to it. 
-The picograd tensor is a wrapper around a numpy array with the following attributes and methods:
+The picograd Tensor class is a wrapper around a numpy array with the following attributes and methods:
 - `value`: This is the value of the node, stored as a NumPy array
 - `parents`: A set containing all the parents of 
 - `grad`: The gradient at this node, initialzed to a NumPy array of zeros in the shape of `value`
 - `_backward`: The basic operation at this node
 - `backward`: A method which computes the backward pass from this node. This means we are computing all gradients with respect to this node
 
-For example, lets have two values $x$ and $y$. If we add them together, we get $z=x+y$. We say that the parents of $z$ are $x$ and $y$.  
+For example, lets have two values `x=1` and `y=2`. If we add them together, we get `z=x+y`. In picograd, a new Tensor object for `z` is created, it has the following properties:
+- `value`: `3`
+- `parents`: `set(x,y)`
+- `grad`: `0`
+- `_backward`: A lambda function telling us how to update the gradients for `x` and `y`.
+
+If we call `z.backward()`, the backward method is called to compute all gradients. Ok, but what about the gradient of `z`? For backpropogation, the node from which backward() is called is set to have a gradient of `1`. Note that this means we can only use this for scalar valued functions. 
+
+Calling `z.backward()` builds the computational graph of all parent nodes starting at `z`. From this graph, we go through it in reversed topologically sorted order and apply the `_backward()` function for each node. EXPAND
 
 ## What works?
+Any operation we would like to apply needs to have a corresponding backward pass method implemented. When dealing with functions operating on vectors and not just scalars, we implement these in the form of a Vector Jacobian Product or VJP. VJPs give us a more compact way to represent the gradient updates for a node. (EXPAND)
+
+Operations for neural networks can be broken down into the following categories:
+- Elementwise operations: `ReLU`,`Sigmoid`,`exp`, `softmax`
+- Non-broadcasted binary operations: `dot`, `matmul`
+- Broadcasted binary operations: `+,-,*`
+- Reduction operations: `mean`, `sum`, `max`
+
+Using the above categories, I have implemented the following in picograd:
+- `ReLU,LeakyReLU,Sigmoid, Tanh, Softmax, LogSoftmax, Dropout, Log, Exp`
+- `Dot, Matmul`
+- `Add,Sub,Pow`, (elementwise) `Mul`, `Div`
+- `mean, sum, max`
+
+With these operations, you can construct all the pieces required to create a fully connected neural network. Add in an optimizer (SGD and Adam implemented) and you train the network! See `Examples/train_MNIST.ipynb` for a neural network trained on MNIST.
+### A note on broadcasting operations
+Subtle
 
 ## How would you improve on this?
+You can do a fair amount with just the operations I have implemented. However, there are a few different directions this project can go now:
+
+### 1. Adding more operations 
+If you wanted to train any sort of vision model, you would need to implement a 2d convolutional operation, as well as average and max pooling operations. If you wanted to train a transformer, you would need to implement a LayerNorm and a Concat operation. 
+
+Aside from this, implementing more loss functions could be helpful. Currently only Negative Log Likelihood loss and Mean-Squared Error loss are implemented. 
+
+### 2. Adding an accelerator
+In its current state, picograd only works on CPU. Training the MNIST model in the examples takes around 10-15 minutes. Training the exact same model on a GPU in PyTorch takes around 30 seconds. Yikes! Given that I don't have any background in C/C++, which is required for adding OpenCL or CUDA support, this will be a difficult task. 
+
+### 3. Code Reformatting/MiniTorch
+As I was writing this up, I came across [MiniTorch](https://minitorch.github.io/), which describes itself as, "...a pure Python re-implementation of the Torch API designed to be simple, easy-to-read, tested, and incremental." In the future I plan on working through this and reformatting picograd to use the same structure as PyTorch. In its current state, adding new operations is a bit cumbersome and PyTorch makes this significantly easier.
+
+ 
