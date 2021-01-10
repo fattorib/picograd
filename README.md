@@ -44,7 +44,7 @@ Using the above categories, I have implemented the following in picograd:
 - `Add,Sub,Pow`, (elementwise) `Mul`, `Div`
 - `mean, sum, max`
 
-With these operations, you can construct all the pieces required to create a fully connected neural network. Add in an optimizer (SGD and Adam implemented) and you train the network! See `Examples/train_MNIST.ipynb` for a neural network trained on MNIST.
+With these operations, you can construct all the pieces required to create a fully connected neural network. Add in an optimizer (SGD and Adam implemented) and you train the network! See `examples/train_MNIST.ipynb` for a neural network trained on MNIST. To verify that everything works, run `test/test_tensor.py`
 ### A note on broadcasting operations
 MISSING
 
