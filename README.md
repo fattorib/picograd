@@ -52,7 +52,7 @@ MISSING
 You can do a fair amount with just the operations I have implemented. However, there are a few different directions this project can go now:
 
 ### 1. Adding more operations 
-If you wanted to train any sort of vision model, you would need to implement a 2d convolutional operation, as well as average and max pooling operations. If you wanted to train a transformer, you would need to implement a LayerNorm and a Concat operation. 
+If you wanted to train any sort of [vision model](https://arxiv.org/abs/1409.1556), you would need to implement a 2d convolutional operation, as well as average and max pooling operations. If you wanted to train a [Transformer](https://arxiv.org/abs/1706.03762), you would need to implement a LayerNorm and a Concat operation. 
 
 Aside from this, adding more loss functions could be helpful. Currently only Negative Log Likelihood loss and Mean-Squared Error loss are implemented. 
 
