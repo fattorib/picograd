@@ -27,7 +27,7 @@ For example, lets have two values `x=1` and `y=2`. If we add them together, we g
 
 If we call `z.backward()`, the backward method is called to compute all gradients. But what about the gradient of `z`? For backpropogation, the node from which backward() is called is set to have a gradient of `1`. Note that this means we can only use this for scalar valued functions. 
 
-Calling `z.backward()` builds the computational graph of all parent nodes starting at `z`. From this graph, we go through it in reversed topologically sorted order and apply the `_backward()` function for each node. EXPAND
+Calling `z.backward()` builds the computational graph of all parent nodes starting at `z`. From this graph, we go through it in reversed topologically sorted order and apply the `_backward()` function for each node. 
 
 ## What actually works?
 Any operation we would like to apply needs to have a corresponding backward pass method implemented. When dealing with functions operating on vectors and not just scalars, we implement these in the form of a Vector Jacobian Product or VJP. VJPs give us a more compact way to represent the gradient updates for a node. (EXPAND)
@@ -57,7 +57,7 @@ If you wanted to train any sort of [vision model](https://arxiv.org/abs/1409.155
 Aside from this, adding more loss functions could be helpful. Currently only Negative Log Likelihood loss and Mean-Squared Error loss are implemented. 
 
 ### 2. Adding an accelerator
-In its current state, picograd only works on CPU. Training the MNIST model in the examples takes around 10-15 minutes. Training the exact same model on a GPU in PyTorch takes around 30 seconds. Yikes! Given that I don't have any background in C/C++, which is required for adding OpenCL or CUDA support, this will be a difficult task...
+In its current state, picograd only works on CPU. Training the MNIST model in the examples takes around 10-15 minutes. Training the exact same model on a GPU in PyTorch takes around 30 seconds. Yikes! Given that I don't have any background in C/C++, which is required for adding OpenCL or CUDA support, this will be a difficult task.
 
 ### 3. Code Reformatting/MiniTorch
 As I was writing this up, I came across [MiniTorch](https://minitorch.github.io/), which describes itself as, "...a pure Python re-implementation of the Torch API designed to be simple, easy-to-read, tested, and incremental." In the future I plan on working through this and reformatting picograd to use the same structure as PyTorch. 
