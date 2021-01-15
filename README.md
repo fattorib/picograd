@@ -29,7 +29,7 @@ If we call `z.backward()`, the backward method is called to compute all gradient
 
 Calling `z.backward()` builds the computational graph of all parent nodes starting at `z`. From this graph, we go through it in reversed topologically sorted order and apply the `_backward()` function for each node. EXPAND
 
-## What works?
+## What actually works?
 Any operation we would like to apply needs to have a corresponding backward pass method implemented. When dealing with functions operating on vectors and not just scalars, we implement these in the form of a Vector Jacobian Product or VJP. VJPs give us a more compact way to represent the gradient updates for a node. (EXPAND)
 
 Operations for neural networks can be broken down into the following categories:
@@ -49,7 +49,7 @@ With these operations, you can construct all the pieces required to create a ful
 The backward pass for broadcasted operations are a bit subtle. Say that we compute a linear pass on a set of inputs with a batch size greater than 1: output = Wx + b. In this computation, the bias vector is broadcasted to match the batch size dimension. If we naively compute the backward gradient now, our gradient will have the wrong size! Instead, what we need to do is explicitly compute the backward pass for 'broadcasting'. I found a very helpful overview of it [here](http://coldattic.info/post/116/). To summarize it, we define an operation, F, which represents the broadcasting explicitly. This would make our above linear pass: output = Wx+F(b). We can therefore compute the VJP for this (it corresponds to summation along the batch axes).
 
 ## How would you improve on this?
-You can do a fair amount with just the operations I have implemented. However, there are a few different directions this project can go now:
+You can do a fair amount with just the operations I have implemented. There are a few different directions this project can take:
 
 ### 1. Adding more operations 
 If you wanted to train any sort of [vision model](https://arxiv.org/abs/1409.1556), you would need to implement a 2d convolutional operation, as well as average and max pooling operations. If you wanted to train a [Transformer](https://arxiv.org/abs/1706.03762), you would need to implement a LayerNorm and a Concat operation. 
