@@ -63,4 +63,4 @@ In its current state, picograd only works on CPU. Training the MNIST model in th
 As I was writing this up, I came across [MiniTorch](https://minitorch.github.io/), which describes itself as, "...a pure Python re-implementation of the Torch API designed to be simple, easy-to-read, tested, and incremental." In the future I plan on working through this and reformatting picograd to use the same structure as PyTorch. 
 
 ### References:
-[tinygrad](https://github.com/geohot/tinygrad) and [micrograd](https://github.com/karpathy/micrograd) are two other implementations of Neural Networks in Python. They were very useful to have as references when working on this project.
+[tinygrad](https://github.com/geohot/tinygrad) and [micrograd](https://github.com/karpathy/micrograd) are two other implementations of neural networks in Python. They were very useful to have as references when working on this project.
