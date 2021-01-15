@@ -1,6 +1,5 @@
 import numpy as np
-from MiniNN.Tensor import Tensor
-from MiniNN.Loss import MSELoss
+from picograd.Tensor import Tensor
 
 
 class Linear():
@@ -34,7 +33,7 @@ class Dropout():
             val = input.value*dropout_vals*(1/(1-self.p))
 
             output = Tensor(val,
-                            children=(input,), fun='DropoutBackward')
+                            parents=(input,), fun='DropoutBackward')
 
             def _backward():
                 # Same issue as ReLU
@@ -47,7 +46,7 @@ class Dropout():
         else:
             return input
 
-# -------Activations
+# -------Activations-------
 
 
 class ReLU():
@@ -56,11 +55,30 @@ class ReLU():
 
         val = np.maximum(input.value, 0)
         output = Tensor(val,
-                        children=(input,), fun='ReLUBackward')
+                        parents=(input,), fun='ReLUBackward')
 
         def _backward():
-            # These gotta be ones!!!!
             input.grad += output.grad*((val > 0).astype(np.float32))
+
+        output._backward = _backward
+
+        return output
+
+
+class LeakyReLU():
+    @staticmethod
+    def __call__(input, alpha=0.01):
+
+        val = np.maximum(input.value, alpha*input.value)
+        output = Tensor(val,
+                        parents=(input,), fun='LeakyReLUBackward')
+
+        grad = np.zeros_like(val)
+        grad[(val > 0)] = 1
+        grad[(val <= 0)] = alpha
+
+        def _backward():
+            input.grad += output.grad*(grad)
 
         output._backward = _backward
 
@@ -81,7 +99,7 @@ class Sigmoid():
                            np.exp(input.value)/(1 + np.exp(input.value))
                            )
         output = Tensor(val,
-                        children=(input,), fun='SigmoidBackard')
+                        parents=(input,), fun='SigmoidBackard')
 
         def _backward():
             input.grad += output.grad*(val*(1-val))
@@ -99,7 +117,7 @@ class Tanh():
 
             val = np.tanh(input.value)
         output = Tensor(val,
-                        children=(input,), fun='TanhBackard')
+                        parents=(input,), fun='TanhBackard')
 
         def _backward():
             input.grad += output.grad*(1-(val**2))
@@ -108,7 +126,7 @@ class Tanh():
 
         return output
 
-# --------Softmaxes
+# --------Softmax Layers-------
 
 
 class Softmax():
@@ -119,7 +137,7 @@ class Softmax():
         sum = np.expand_dims(sum, 1)
         val = exp/sum
         output = Tensor(val,
-                        children=(input,), fun='SoftmaxBackward')
+                        parents=(input,), fun='SoftmaxBackward')
 
         def _backward():
             R_bar = -np.sum(output.grad*exp, axis=1, keepdims=True)/(sum**2)
@@ -141,7 +159,7 @@ class LogSoftmax():
         val = np.log(exp/sum)
 
         output = Tensor(val,
-                        children=(input,), fun='LogSoftmaxBackward')
+                        parents=(input,), fun='LogSoftmaxBackward')
 
         # Complete credit to TinyGrad for this gradient...
         def _backward():
@@ -151,39 +169,3 @@ class LogSoftmax():
         output._backward = _backward
 
         return output
-
-
-# ---------Convolutional Layers---------
-# lol
-
-
-if __name__ == "__main__":
-
-    x = Tensor([[0.001, 0.2, -1, 3], [3.2, 1, 3, 1]])
-
-    softmax = Softmax()
-
-    y = softmax(x, dim=1)
-
-    print(y)
-
-    actual_out = Tensor([[1, 2, 3, 4], [3.2, 1, 3, 1]])
-
-    mse = MSELoss()
-    loss = mse(y, actual_out)
-    loss.backward()
-    print(x.grad)
-
-    import torch
-
-    x = torch.tensor([[0.001, 0.2, -1, 3], [3.2, 1, 3, 1]], requires_grad=True)
-    softmax = torch.nn.Softmax(dim=1)
-    y = softmax(x)
-    print(y)
-
-    actual_out = torch.tensor(
-        [[1, 2, 3, 4], [3.2, 1, 3, 1]], requires_grad=True)
-    mse = torch.nn.MSELoss()
-    loss = mse(y, actual_out)
-    loss.backward()
-    print(x.grad)

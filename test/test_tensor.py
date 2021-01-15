@@ -3,18 +3,20 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 import unittest
-from MiniNN.Tensor import Tensor
-from MiniNN.nn import *
-from MiniNN.Loss import NLLLoss, MSELoss
+from picograd.Tensor import Tensor
+from picograd.nn import *
+from picograd.Loss import NLLLoss, MSELoss
 
-# Classification weights
-x_init = np.random.uniform(-1, 1, size=(64, 1024))
-weight_init = np.random.uniform(-1, 1, size=(1024, 50))
-bias_init = np.random.uniform(-1, 1, size=(1, 50))
-targets_init = np.random.randint(0, 50, size=(64,))
+# -----------Classification init
+# - Forward/Backward pass corresponded to 500 category classification problem
+# - Using a batch size of 512
+x_init = np.random.uniform(-1, 1, size=(512, 1024))
+weight_init = np.random.uniform(-1, 1, size=(1024, 500))
+bias_init = np.random.uniform(-1, 1, size=(1, 500))
+targets_init = np.random.randint(0, 500, size=(512,))
 
-# Regression weights
-y_init = np.random.uniform(-1, 1, size=(64, 1))
+# -----------Regression init
+y_init = np.random.uniform(-1, 1, size=(512, 1))
 weight_regression_init = np.random.uniform(-1, 1, size=(1024, 1))
 bias_regression_init = np.random.uniform(-1, 1, size=(1, 1))
 
@@ -58,8 +60,8 @@ class TestTensorBasics(unittest.TestCase):
             weights = Tensor(weight_init)
             bias = Tensor(bias_init)
 
-            # Making target tensor
-            targets = np.zeros((len(targets_init), 50), np.float32)
+            # Making target tensor - construction should be done within NLLLoss
+            targets = np.zeros((len(targets_init), 500), np.float32)
             targets[range(targets.shape[0]), targets_init] = 1
             targets = Tensor(targets)
 
@@ -93,12 +95,6 @@ class TestTensorBasics(unittest.TestCase):
         torch_out, w_torch_grad, b_torch_grad = pytorch_backward()
 
         np.testing.assert_allclose(w_grad, w_torch_grad, atol=1e-6)
-        # Gradients were being broadcasted in a weird way
-        # print('Shape of Torch Bias grad:', b_torch_grad.shape)
-        # print('Shape of MiniNN Bias grad:', b_grad.shape)
-
-        # print('Shape of Torch weight grad:', w_torch_grad.shape)
-        # print('Shape of MiniNN weight grad:', w_grad.shape)
         np.testing.assert_allclose(b_grad, b_torch_grad, atol=1e-6)
         np.testing.assert_allclose(out, torch_out, atol=1e-6)
 

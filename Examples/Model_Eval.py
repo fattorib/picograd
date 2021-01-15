@@ -1,4 +1,4 @@
-from MiniNN.Tensor import *
+from picograd.Tensor import *
 import numpy as np
 
 
@@ -6,6 +6,7 @@ import numpy as np
 
 
 def eval_acc(model, dataloader):
+    dataloader.iter = 0
     accuracy = 0
     for inputs, labels in dataloader:
         logps = model.forward(inputs)

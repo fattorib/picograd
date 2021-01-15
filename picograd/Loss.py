@@ -1,5 +1,4 @@
-# loss functions go here
-from MiniNN.Tensor import Tensor
+from picograd.Tensor import Tensor
 import numpy as np
 
 
