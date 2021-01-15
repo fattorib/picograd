@@ -7,7 +7,7 @@
 ## What is this?
 In the process of learning ML and PyTorch, I decided to try and write my own neural network package in Python. It has been (relatively) succesful. 
 
-Optimizing neural networks involves minimization of a cost function (the loss) from a very high dimensional space to <a href="https://www.codecogs.com/eqnedit.php?latex=\mathbb{R}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\mathbb{R}" title="\mathbb{R}" /></a>. Because of this, it would not be practical to compute hunderds of thousands of numerical derivatives, each requiring a separate forward pass of the network just for a single optimization step. Instead, we can use something called [Reverse Mode Automatic Differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation#Reverse_accumulation). Think of it as repeatedly applying the chain to some very large compositions of functions. (Add a bit more explanation here)
+Optimizing neural networks involves minimization of a cost function (the loss) from a very high dimensional space to <a href="https://www.codecogs.com/eqnedit.php?latex=\mathbb{R}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\mathbb{R}" title="\mathbb{R}" /></a>. Because of this, it would not be practical to compute hunderds of thousands of numerical derivatives, each requiring a separate forward pass of the network just for a single optimization step. Instead, we can use something called [Reverse Mode Automatic Differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation#Reverse_accumulation). You can think of it as repeatedly applying the chain to some very large compositions of functions. 
 
 
 ## How does it work?
@@ -62,4 +62,5 @@ In its current state, picograd only works on CPU. Training the MNIST model in th
 ### 3. Code Reformatting/MiniTorch
 As I was writing this up, I came across [MiniTorch](https://minitorch.github.io/), which describes itself as, "...a pure Python re-implementation of the Torch API designed to be simple, easy-to-read, tested, and incremental." In the future I plan on working through this and reformatting picograd to use the same structure as PyTorch. 
 
- 
+### References:
+[tinygrad](https://github.com/geohot/tinygrad) and [micrograd](https://github.com/karpathy/micrograd) are two other implementations of Neural Networks in Python. They were very useful to have as references when working on this project.
