@@ -44,6 +44,10 @@ Using the above categories, I have implemented the following in picograd:
 - `Add,Sub,Pow`, (elementwise) `Mul`, `Div`
 - `mean, sum, max`
 
+With these operations, you can construct all the pieces required to create a fully connected neural network. Add in an optimizer (SGD and Adam implemented) and you train the network! See `examples/train_MNIST.ipynb` for a neural network trained on MNIST. To run tests, see `test/test_tensor.py`.
+### A note on broadcasting operations
+The backward pass for broadcasted operations are a bit subtle. Say that we compute a linear pass on a set of inputs with a batch size greater than 1: output = Wx + b. In this computation, the bias vector is broadcasted to match the batch size dimension. If we naively compute the backward gradient now, our gradient will have the wrong size! Instead, what we need to do is explicitly compute the backward pass for 'broadcasting'. I found a very helpful overview of it [here](http://coldattic.info/post/116/). To summarize it, we define an operation, F, which represents the broadcasting explicitly. This would make our above linear pass: output = Wx+F(b). We can therefore compute the VJP for this (it corresponds to summation along the batch axes).
+
 ## Example
 
 ```python
@@ -58,9 +62,6 @@ print(x.grad)  # dz/dx
 print(y.grad)  # dz/dy
 ```
 
-With these operations, you can construct all the pieces required to create a fully connected neural network. Add in an optimizer (SGD and Adam implemented) and you train the network! See `examples/train_MNIST.ipynb` for a neural network trained on MNIST. To run tests, see `test/test_tensor.py`.
-### A note on broadcasting operations
-The backward pass for broadcasted operations are a bit subtle. Say that we compute a linear pass on a set of inputs with a batch size greater than 1: output = Wx + b. In this computation, the bias vector is broadcasted to match the batch size dimension. If we naively compute the backward gradient now, our gradient will have the wrong size! Instead, what we need to do is explicitly compute the backward pass for 'broadcasting'. I found a very helpful overview of it [here](http://coldattic.info/post/116/). To summarize it, we define an operation, F, which represents the broadcasting explicitly. This would make our above linear pass: output = Wx+F(b). We can therefore compute the VJP for this (it corresponds to summation along the batch axes).
 
 ## How would you improve on this?
 You can do a fair amount with just the operations I have implemented. There are a few different directions this project can take:
