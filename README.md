@@ -67,7 +67,7 @@ print(y.grad)  # dz/dy
 You can do a fair amount with just the operations I have implemented. There are a few different directions this project can take:
 
 ### 1. Adding more operations 
-If you wanted to train any sort of [vision model](https://arxiv.org/abs/1409.1556), you would need to implement a 2d convolutional operation, as well as average and max pooling operations. If you wanted to train a [Transformer](https://arxiv.org/abs/1706.03762), you would need to implement a LayerNorm and a Concat operation. 
+If you wanted to train any sort of [vision model](https://arxiv.org/abs/1409.1556), you would need to implement a 2d convolutional operation, as well as average and max pooling operations. If you wanted to train a [Transformer](https://arxiv.org/abs/1706.03762), you would need to implement a LayerNorm and a Concat operation (Ok, well you *could* just construct LayerNorm and BatchNorm as compositions of the basic operations we have but this would be like computing the backward pass of a sigmoid as a composition of all the basic functions instead of as `dout*sigmdoid(z)(1-sigmoid(z))`. 
 
 Aside from this, adding more loss functions could be helpful. Currently only Negative Log Likelihood loss and Mean-Squared Error loss are implemented. 
 
