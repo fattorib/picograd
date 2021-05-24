@@ -14,7 +14,7 @@ Optimizing neural networks involves minimization of a cost function (the loss) f
 Since what we are doing is computing the chain rule property at a bunch of nodes, we need a way to track how each node is transformed when an operation is applied to it. 
 The picograd Tensor class is a wrapper around a numpy array with the following attributes and methods:
 - `value`: This is the value of the node, stored as a NumPy array
-- `parents`: A set containing all the parents of 
+- `parents`: A set containing all the parents of `value`
 - `grad`: The gradient at this node, initialzed to a NumPy array of zeros in the shape of `value`
 - `_backward`: The basic operation at this node
 - `backward`: A method which computes the backward pass from this node. This means we are computing all gradients with respect to this node
